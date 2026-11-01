@@ -58,6 +58,17 @@
     .print-only {
       display: none;
     }
+    /* Style the native datalist dropdown arrow to look great in dark & light mode */
+    input[list]::-webkit-calendar-picker-indicator {
+      cursor: pointer;
+      opacity: 0.6;
+      filter: invert(0.8);
+      padding: 0 2px;
+      transition: opacity 0.2s;
+    }
+    input[list]::-webkit-calendar-picker-indicator:hover {
+      opacity: 1;
+    }
   </style>
 </head>
 <body class="bg-slate-900 text-slate-100 min-h-screen flex flex-col font-sans antialiased transition-colors duration-200">
@@ -235,11 +246,17 @@
     <div class="no-print bg-slate-800/40 border border-slate-700/40 rounded-xl p-3.5 text-xs text-slate-400 flex items-center justify-between">
       <div class="flex items-center gap-2">
         <span class="inline-block w-2.5 h-2.5 rounded-full bg-blue-500"></span>
-        <span><strong>Astuce de saisie rapide :</strong> Tapez simplement les chiffres (ex. <code class="bg-slate-900 px-1 py-0.5 rounded text-slate-200">8</code> pour 08:00, <code class="bg-slate-900 px-1 py-0.5 rounded text-slate-200">815</code> pour 08:15, <code class="bg-slate-900 px-1 py-0.5 rounded text-slate-200">1630</code> pour 16:30). Utilisez <code class="bg-slate-900 px-1 py-0.5 rounded text-slate-200">Tab</code> pour passer à la case suivante.</span>
+        <span><strong>Au choix :</strong> Tapez l'heure directement au clavier (ex. <code class="bg-slate-900 px-1 py-0.5 rounded text-slate-200">8</code> pour 08:00, <code class="bg-slate-900 px-1 py-0.5 rounded text-slate-200">815</code> pour 08:15) <strong>OU</strong> cliquez sur la petite flèche <code class="bg-slate-900 px-1 py-0.5 rounded text-slate-200">▼</code> / double-cliquez pour choisir dans la liste déroulante (par pas de 15 min).</span>
       </div>
       <div class="text-slate-500">Sauvegarde automatique active ✓</div>
     </div>
   </main>
+
+  <!-- DATALISTS FOR FAST TIME SELECTION (CHOICE VIA DROPDOWN OR FREE TYPING) -->
+  <datalist id="listDepart"></datalist>
+  <datalist id="listRentree"></datalist>
+  <datalist id="listPause"></datalist>
+  <datalist id="listRecup"></datalist>
 
   <!-- SETTINGS MODAL -->
   <div id="modalSettings" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
@@ -676,19 +693,19 @@
             ${badge}
           </td>
           <td class="p-1.5">
-            <input type="text" data-index="${index}" data-field="depart" class="time-input w-full bg-slate-900/80 border border-slate-700/80 rounded px-2 py-1 text-slate-100 outline-none focus:border-blue-500 text-center font-mono" placeholder="00:00" value="${day.depart}" />
+            <input type="text" list="listDepart" data-index="${index}" data-field="depart" class="time-input w-full bg-slate-900/80 border border-slate-700/80 rounded px-2 py-1 text-slate-100 outline-none focus:border-blue-500 text-center font-mono cursor-pointer" placeholder="00:00" value="${day.depart}" autocomplete="off" />
           </td>
           <td class="p-1.5">
-            <input type="text" data-index="${index}" data-field="rentree" class="time-input w-full bg-slate-900/80 border border-slate-700/80 rounded px-2 py-1 text-slate-100 outline-none focus:border-blue-500 text-center font-mono" placeholder="00:00" value="${day.rentree}" />
+            <input type="text" list="listRentree" data-index="${index}" data-field="rentree" class="time-input w-full bg-slate-900/80 border border-slate-700/80 rounded px-2 py-1 text-slate-100 outline-none focus:border-blue-500 text-center font-mono cursor-pointer" placeholder="00:00" value="${day.rentree}" autocomplete="off" />
           </td>
           <td class="p-1.5">
-            <input type="text" data-index="${index}" data-field="pause" class="time-input w-full bg-slate-900/80 border border-slate-700/80 rounded px-2 py-1 text-slate-100 outline-none focus:border-blue-500 text-center font-mono" placeholder="00:00" value="${day.pause}" />
+            <input type="text" list="listPause" data-index="${index}" data-field="pause" class="time-input w-full bg-slate-900/80 border border-slate-700/80 rounded px-2 py-1 text-slate-100 outline-none focus:border-blue-500 text-center font-mono cursor-pointer" placeholder="00:00" value="${day.pause}" autocomplete="off" />
           </td>
           <td class="p-2.5 font-bold text-blue-400 font-mono text-center" id="cell-total-${index}">
             ${day.totalFormatted}
           </td>
           <td class="p-1.5">
-            <input type="text" data-index="${index}" data-field="hRecup" class="time-input w-full bg-slate-900/80 border border-slate-700/80 rounded px-2 py-1 text-slate-100 outline-none focus:border-blue-500 text-center font-mono text-blue-300" placeholder="00:00" value="${day.hRecup}" />
+            <input type="text" list="listRecup" data-index="${index}" data-field="hRecup" class="time-input w-full bg-slate-900/80 border border-slate-700/80 rounded px-2 py-1 text-slate-100 outline-none focus:border-blue-500 text-center font-mono text-blue-300 cursor-pointer" placeholder="00:00" value="${day.hRecup}" autocomplete="off" />
           </td>
           <td class="p-2.5 font-semibold text-emerald-400 font-mono text-center" id="cell-sup-${index}">
             ${day.hSupFormatted}
@@ -755,22 +772,80 @@
       document.getElementById('printBaseHours').textContent = `${settings.standardDailyHours}h00`;
     }
 
-    function attachTableListeners() {
-      // Time inputs auto-normalization & update
-      document.querySelectorAll('.time-input').forEach(input => {
-        input.addEventListener('blur', (e) => {
-          const idx = parseInt(e.target.dataset.index, 10);
-          const field = e.target.dataset.field;
-          const normalized = normalizeTimeInput(e.target.value);
-          e.target.value = normalized;
-          currentSheet.days[idx][field] = normalized;
-          
-          recalculateDay(currentSheet.days[idx]);
-          document.getElementById(`cell-total-${idx}`).textContent = currentSheet.days[idx].totalFormatted;
-          document.getElementById(`cell-sup-${idx}`).textContent = currentSheet.days[idx].hSupFormatted;
-          document.getElementById(`cell-neg-${idx}`).textContent = currentSheet.days[idx].hNegatifFormatted;
+    // --- TIME OPTIONS / DATALISTS POPULATION ---
+    function populateDatalists() {
+      // 1. Départ (06:00 to 18:00 every 15 mins)
+      const listDepart = document.getElementById('listDepart');
+      const departSlots = [];
+      for (let min = 6 * 60; min <= 18 * 60; min += 15) {
+        const h = Math.floor(min / 60).toString().padStart(2, '0');
+        const m = (min % 60).toString().padStart(2, '0');
+        departSlots.push(`${h}:${m}`);
+      }
+      listDepart.innerHTML = departSlots.map(t => `<option value="${t}">`).join('');
 
-          recalculateSheet();
+      // 2. Rentrée (12:00 to 20:00 every 15 mins)
+      const listRentree = document.getElementById('listRentree');
+      const rentreeSlots = [];
+      for (let min = 12 * 60; min <= 20 * 60; min += 15) {
+        const h = Math.floor(min / 60).toString().padStart(2, '0');
+        const m = (min % 60).toString().padStart(2, '0');
+        rentreeSlots.push(`${h}:${m}`);
+      }
+      listRentree.innerHTML = rentreeSlots.map(t => `<option value="${t}">`).join('');
+
+      // 3. Pause repas (00:00, 00:15, 00:30, 00:45, 01:00, 01:15, 01:30, 01:45, 02:00)
+      const listPause = document.getElementById('listPause');
+      const pauseSlots = ['00:00', '00:15', '00:30', '00:45', '01:00', '01:15', '01:30', '01:45', '02:00'];
+      listPause.innerHTML = pauseSlots.map(t => `<option value="${t}">`).join('');
+
+      // 4. H Récupérer (00:30 à 08:00 par 30 mins)
+      const listRecup = document.getElementById('listRecup');
+      const recupSlots = [];
+      for (let min = 30; min <= 8 * 60; min += 30) {
+        const h = Math.floor(min / 60).toString().padStart(2, '0');
+        const m = (min % 60).toString().padStart(2, '0');
+        recupSlots.push(`${h}:${m}`);
+      }
+      listRecup.innerHTML = recupSlots.map(t => `<option value="${t}">`).join('');
+    }
+
+    function attachTableListeners() {
+      function updateCell(inputEl, normalize = false) {
+        const idx = parseInt(inputEl.dataset.index, 10);
+        const field = inputEl.dataset.field;
+        let val = inputEl.value;
+        if (normalize && val) {
+          val = normalizeTimeInput(val);
+          inputEl.value = val;
+        }
+        currentSheet.days[idx][field] = val;
+        
+        recalculateDay(currentSheet.days[idx]);
+        document.getElementById(`cell-total-${idx}`).textContent = currentSheet.days[idx].totalFormatted;
+        document.getElementById(`cell-sup-${idx}`).textContent = currentSheet.days[idx].hSupFormatted;
+        document.getElementById(`cell-neg-${idx}`).textContent = currentSheet.days[idx].hNegatifFormatted;
+
+        recalculateSheet();
+      }
+
+      // Time inputs: handle both manual typing (blur) and datalist selection (change/input)
+      document.querySelectorAll('.time-input').forEach(input => {
+        // Selection from dropdown list
+        input.addEventListener('change', (e) => {
+          updateCell(e.target, false);
+        });
+
+        // Leaving the field after keyboard typing
+        input.addEventListener('blur', (e) => {
+          updateCell(e.target, true);
+        });
+
+        // Click or double click to show dropdown list if supported
+        input.addEventListener('click', (e) => {
+          if (e.target.showPicker) {
+            try { e.target.showPicker(); } catch {}
+          }
         });
 
         input.addEventListener('keydown', (e) => {
@@ -848,6 +923,7 @@
     // --- INITIALIZATION ---
     function init() {
       loadSettings();
+      populateDatalists();
       document.getElementById('headerWorkerName').textContent = settings.userName;
 
       const dateNow = new Date();
