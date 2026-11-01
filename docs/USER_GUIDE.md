@@ -27,7 +27,20 @@ Bienvenue ! Cette application a été conçue pour être **d'une simplicité abs
 ### C. Vous avez des horaires particuliers ?
 👉 Deux méthodes au choix :
 1. **À la souris :** Cliquez sur la flèche `▼` pour choisir votre heure dans la liste (ex: 07:45, 17:00).
-2. **Au clavier :** Tapez directement les chiffres (ex: tapez `815` $\rightarrow$ cela écrit automatiquement `08:15`).
+2. **Au clavier (comme dans Excel) :**
+   * Dès que vous cliquez sur une case, **le texte est automatiquement sélectionné**. Tapez directement (ex: `830`) sans avoir à effacer l'ancienne valeur !
+   * Utilisez les **touches fléchées `↓` (Bas) et `↑` (Haut)** pour passer d'un jour à l'autre dans la même colonne sans toucher à la souris.
+   * La touche **Entrée** valide et passe directement au jour suivant.
+
+---
+
+## 3. Visibilité Maximale & Repérage Facile
+
+* 📍 **Journée d'aujourd'hui en évidence :** La journée en cours est automatiquement mise en valeur avec une bordure verte et un badge distinctif `📍 Aujourd'hui`. Un bouton en haut permet d'y descendre en un clic.
+* 💤 **Week-ends & Jours fériés :** Les samedis et dimanches sont légèrement grisés pour faire ressortir votre semaine de travail, et les jours fériés portent un badge violet explicite (ex. `🎉 Lundi de Pâques`).
+* 📊 **Barre d'avancement du mois :** Au-dessus du tableau, une barre de progression vous indique en temps réel :
+  * Le nombre de jours prestés sur le mois (ex. *14 / 21 jours ouvrés (67%)*).
+  * Votre moyenne d'heures réelles travaillées par jour.
 
 ---
 
