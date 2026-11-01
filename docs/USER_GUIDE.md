@@ -107,13 +107,16 @@ En haut de votre feuille de travail, six cartes récapitulatives vous donnent un
 * Cliquez sur **« Export Excel/CSV »** en haut à droite.
 * Le fichier téléchargé respecte exactement la structure et les libellés de l'ancien fichier Excel de Didier.
 
-### 4.2. Impression ou Enregistrement PDF
-* Cliquez sur **« Imprimer / PDF »**.
-* L'application prépare une page au format A4 noir & blanc professionnelle contenant :
-  * Le titre officiel du relevé avec le nom du collaborateur.
-  * La grille propre sans les menus déroulants et boutons d'action.
-  * Deux encadrés en bas de page pour la signature du collaborateur et la validation du responsable.
-* Choisissez votre imprimante ou **« Enregistrer au format PDF »**.
+### 4.2. Impression ou Enregistrement PDF (Mise en Page A4 Professionnelle)
+* Cliquez sur **« Imprimer / PDF »** en haut à droite.
+* L'application prépare automatiquement une feuille officielle parfaitement calibrée pour le format standard **A4 portrait** :
+  * **En-tête officiel clair :** Titre en majuscules, nom du collaborateur, base contractuelle, pays et date exacte d'édition.
+  * **Synthèse récapitulative en 6 encadrés :** Volume presté, heures sup, déficit, récupérations prises, report antérieur, et **Solde Cumulé Définitif** (avec mention explicite crédit/débit).
+  * **Grille épurée et lisible :** Colonnes typographiques sans emojis perturbateurs, week-ends subtilement grisés pour repérer les semaines d'un coup d'œil, boutons d'action masqués, chiffres parfaitement alignés.
+  * **Totaux de clôture complets :** Les totaux du mois ainsi que le report et le solde cumulé final s'affichent au bas du tableau.
+  * **Double bloc de signatures officiel :** Emplacements formels pour le visa du collaborateur (*« Lu et approuvé, certifié exact »*) et la validation de la direction (*« Bon pour accord »*), avec mention de date.
+  * **Tenue sur 1 page :** Les marges et espacements sont calculés pour tenir sur **une seule page A4** sans saut de page intempestif.
+* Dans la fenêtre qui s'ouvre, choisissez votre imprimante papier ou sélectionnez **« Enregistrer au format PDF »**.
 
 ---
 

@@ -42,37 +42,162 @@
 
     /* Print styles */
     @media print {
-      body {
-        zoom: 1 !important;
+      @page {
+        size: A4 portrait;
+        margin: 6mm 8mm;
+      }
+
+      * {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+      }
+
+      html, body {
         background: white !important;
         color: #0f172a !important;
-        font-size: 9.5pt;
+        font-size: 8pt !important;
+        line-height: 1.15 !important;
+        zoom: 1 !important;
       }
-      .no-print {
+
+      .no-print,
+      .col-action {
         display: none !important;
       }
+
       .print-only {
         display: block !important;
       }
+
+      main {
+        max-width: 100% !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        gap: 0 !important;
+      }
+
       .table-container {
         overflow: visible !important;
         max-height: none !important;
         box-shadow: none !important;
-        border: 1px solid #cbd5e1 !important;
+        border: 1.5px solid #334155 !important;
+        border-radius: 3px !important;
       }
+
       table {
-        page-break-inside: auto;
+        width: 100% !important;
+        border-collapse: collapse !important;
+        table-layout: fixed !important;
       }
-      tr {
-        page-break-inside: avoid;
-        page-break-after: auto;
+
+      thead th {
+        background-color: #f1f5f9 !important;
+        color: #0f172a !important;
+        border-right: 1px solid #cbd5e1 !important;
+        border-bottom: 2px solid #334155 !important;
+        padding: 3px 2px !important;
+        font-size: 7.5pt !important;
+        font-weight: 800 !important;
+        text-transform: uppercase !important;
       }
-      input, select {
+
+      tbody td {
+        padding: 1.5px 2px !important;
+        border-bottom: 1px solid #e2e8f0 !important;
+        border-right: 1px solid #e2e8f0 !important;
+        height: 18px !important;
+        line-height: 1.1 !important;
+        vertical-align: middle !important;
+      }
+
+      tbody tr {
+        page-break-inside: avoid !important;
+      }
+
+      /* Clean alternating / weekend rows */
+      tbody tr.bg-slate-100\/70,
+      tbody tr.dark\:bg-zinc-900\/60 {
+        background-color: #f8fafc !important;
+        color: #64748b !important;
+      }
+
+      tbody tr.bg-indigo-50\/70,
+      tbody tr.dark\:bg-indigo-950\/30 {
+        background-color: #f1f5f9 !important;
+        color: #1e293b !important;
+      }
+
+      tbody tr.row-today {
+        background-color: #ffffff !important;
+        border-left: none !important;
+      }
+
+      .badge-today,
+      .badge-weekend {
+        display: none !important;
+      }
+
+      .badge-holiday {
+        background: transparent !important;
+        border: none !important;
+        color: #334155 !important;
+        padding: 0 !important;
+        font-size: 7pt !important;
+        font-weight: 700 !important;
+      }
+
+      /* Clean inputs for print */
+      input.time-input,
+      input.chantier-input {
         border: none !important;
         background: transparent !important;
-        color: black !important;
-        font-weight: 600;
+        color: #0f172a !important;
+        font-weight: 700 !important;
+        font-size: 7.5pt !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        height: auto !important;
         box-shadow: none !important;
+        text-align: center !important;
+        width: 100% !important;
+      }
+
+      input.chantier-input {
+        text-align: left !important;
+        padding-left: 2px !important;
+        font-size: 7pt !important;
+        font-weight: 600 !important;
+      }
+
+      input[list]::-webkit-calendar-picker-indicator {
+        display: none !important;
+      }
+
+      td span.inline-block,
+      td span.inline-flex {
+        background: transparent !important;
+        border: none !important;
+        padding: 0 !important;
+        font-size: 7.5pt !important;
+        font-weight: 700 !important;
+      }
+
+      /* Totals footer */
+      tfoot {
+        background-color: #f8fafc !important;
+        border-top: 2px solid #334155 !important;
+      }
+
+      tfoot td {
+        padding: 2.5px 3px !important;
+        font-size: 7.5pt !important;
+        border-right: 1px solid #cbd5e1 !important;
+        border-bottom: 1px solid #cbd5e1 !important;
+      }
+
+      .print-signature-box {
+        page-break-inside: avoid !important;
+        margin-top: 5px !important;
       }
     }
     .print-only {
@@ -220,16 +345,60 @@
     </div>
   </header>
 
-  <!-- PRINT ONLY HEADER -->
-  <div class="print-only p-4 mb-2 border-b border-gray-300">
-    <div class="flex justify-between items-center">
+  <!-- PRINT ONLY HEADER & EXECUTIVE SUMMARY -->
+  <div class="print-only mb-2">
+    <!-- Top Bar -->
+    <div class="flex justify-between items-start pb-1.5 mb-1.5 border-b-2 border-slate-800">
       <div>
-        <h1 class="text-xl font-bold text-gray-900">Relevé des Heures de Prestation</h1>
-        <p class="text-sm text-gray-600">Collaborateur : <strong id="printWorkerName">Didier</strong></p>
+        <div class="flex items-center gap-1.5">
+          <span class="inline-block w-2.5 h-2.5 bg-slate-900 rounded-sm"></span>
+          <h1 class="text-base font-black tracking-tight text-slate-900 uppercase">Relevé des Heures de Prestation</h1>
+        </div>
+        <p class="text-[10px] text-slate-600 mt-0.5">
+          Collaborateur : <strong id="printWorkerName" class="text-slate-900 font-bold">Didier</strong>
+          <span class="mx-2 text-slate-400">•</span>
+          Base journalière : <strong id="printBaseHours" class="text-slate-800 font-semibold">8h00</strong>
+          <span class="mx-2 text-slate-400">•</span>
+          Pays : <strong id="printCountry" class="text-slate-800 font-semibold">Belgique</strong>
+        </p>
       </div>
       <div class="text-right">
-        <p class="text-lg font-bold text-gray-900" id="printMonthYear">Janvier 2026</p>
-        <p class="text-xs text-gray-500">Base journalière : <span id="printBaseHours">8h00</span></p>
+        <p class="text-sm font-extrabold text-slate-900 uppercase tracking-wide" id="printMonthYear">Janvier 2026</p>
+        <p class="text-[9.5px] text-slate-500 mt-0.5" id="printDateEdition">Édité le 01/11/2026</p>
+      </div>
+    </div>
+
+    <!-- Official Recap Summary (6 KPI Boxes for HR & Direction) -->
+    <div class="grid grid-cols-6 gap-1.5 mb-1.5 text-center">
+      <div class="border border-slate-300 rounded p-1 bg-slate-50">
+        <p class="text-[8px] uppercase font-bold text-slate-600 tracking-wider">Travaillées</p>
+        <p id="printKpiWorked" class="text-[11px] font-mono font-bold text-slate-900 mt-0.5">00:00:00</p>
+        <p id="printKpiWorkedDays" class="text-[8px] text-slate-500">0 j presté(s)</p>
+      </div>
+      <div class="border border-emerald-300 rounded p-1 bg-emerald-50/70">
+        <p class="text-[8px] uppercase font-bold text-emerald-800 tracking-wider">Heures Sup (+)</p>
+        <p id="printKpiSup" class="text-[11px] font-mono font-extrabold text-emerald-700 mt-0.5">00:00:00</p>
+        <p class="text-[8px] text-emerald-600">&gt; base/j</p>
+      </div>
+      <div class="border border-amber-300 rounded p-1 bg-amber-50/70">
+        <p class="text-[8px] uppercase font-bold text-amber-800 tracking-wider">Heures Nég. (-)</p>
+        <p id="printKpiNegatif" class="text-[11px] font-mono font-extrabold text-amber-700 mt-0.5">00:00:00</p>
+        <p class="text-[8px] text-amber-600">&lt; base/j</p>
+      </div>
+      <div class="border border-sky-300 rounded p-1 bg-sky-50/70">
+        <p class="text-[8px] uppercase font-bold text-sky-800 tracking-wider">Récupérations</p>
+        <p id="printKpiRecup" class="text-[11px] font-mono font-bold text-sky-700 mt-0.5">00:00:00</p>
+        <p class="text-[8px] text-sky-600">Décomptées</p>
+      </div>
+      <div class="border border-slate-300 rounded p-1 bg-slate-50">
+        <p class="text-[8px] uppercase font-bold text-slate-600 tracking-wider">Solde Précédent</p>
+        <p id="printKpiSoldePrec" class="text-[11px] font-mono font-bold text-slate-800 mt-0.5">00:00:00</p>
+        <p class="text-[8px] text-slate-500">Report</p>
+      </div>
+      <div class="border-2 border-slate-800 rounded p-1 bg-slate-100 font-bold">
+        <p class="text-[8px] uppercase font-extrabold text-slate-900 tracking-wider">Solde Cumulé Total</p>
+        <p id="printKpiSoldeCumule" class="text-[11px] font-mono font-black text-slate-900 mt-0.5">00:00:00</p>
+        <p id="printKpiStatus" class="text-[8px] font-bold text-slate-700">À reporter</p>
       </div>
     </div>
   </div>
@@ -323,16 +492,16 @@
         <table class="w-full text-left border-collapse text-sm">
           <thead>
             <tr class="bg-slate-100 dark:bg-zinc-900/90 text-slate-700 dark:text-zinc-300 font-bold border-b-2 border-slate-200 dark:border-zinc-800 text-xs uppercase tracking-wider">
-              <th class="py-3.5 px-3.5 w-36">📅 Date</th>
-              <th class="py-3.5 px-2 w-28 text-center">⏰ Départ</th>
-              <th class="py-3.5 px-2 w-28 text-center">🏁 Rentrée</th>
-              <th class="py-3.5 px-2 w-28 text-center">☕ Pause</th>
-              <th class="py-3.5 px-3 w-28 text-center font-extrabold bg-blue-50/70 dark:bg-blue-950/30 text-blue-900 dark:text-blue-200 border-x border-slate-200 dark:border-zinc-800">⏱️ Total H</th>
-              <th class="py-3.5 px-2 w-28 text-center text-sky-800 dark:text-sky-300">🏖️ H Récup.</th>
-              <th class="py-3.5 px-2 w-24 text-center text-emerald-800 dark:text-emerald-300 font-extrabold">🟢 H Sup</th>
-              <th class="py-3.5 px-2 w-24 text-center text-amber-800 dark:text-amber-300 font-extrabold">🟠 H Négatif</th>
-              <th class="py-3.5 px-3 min-w-[190px]">📍 Chantier / Absence</th>
-              <th class="py-3.5 px-2 w-28 no-print text-center">⚡ Action</th>
+              <th class="py-3 px-3 w-32"><span class="no-print">📅 </span>Date</th>
+              <th class="py-3 px-2 w-24 text-center"><span class="no-print">⏰ </span>Départ</th>
+              <th class="py-3 px-2 w-24 text-center"><span class="no-print">🏁 </span>Rentrée</th>
+              <th class="py-3 px-2 w-24 text-center"><span class="no-print">☕ </span>Pause</th>
+              <th class="py-3 px-2 w-28 text-center font-extrabold bg-blue-50/70 dark:bg-blue-950/30 text-blue-900 dark:text-blue-200 border-x border-slate-200 dark:border-zinc-800"><span class="no-print">⏱️ </span>Total Presté</th>
+              <th class="py-3 px-2 w-24 text-center text-sky-800 dark:text-sky-300"><span class="no-print">🏖️ </span>H. Récup</th>
+              <th class="py-3 px-2 w-24 text-center text-emerald-800 dark:text-emerald-300 font-extrabold"><span class="no-print">🟢 </span>H. Sup (+)</th>
+              <th class="py-3 px-2 w-24 text-center text-amber-800 dark:text-amber-300 font-extrabold"><span class="no-print">🟠 </span>H. Nég (-)</th>
+              <th class="py-3 px-3 min-w-[190px]"><span class="no-print">📍 </span>Chantier / Type d'activité</th>
+              <th class="py-3 px-2 w-24 no-print col-action text-center">⚡ Action</th>
             </tr>
           </thead>
           <tbody id="tableBody" class="divide-y divide-slate-100 dark:divide-zinc-800/80">
@@ -340,15 +509,31 @@
           </tbody>
           <tfoot class="bg-slate-100 dark:bg-zinc-900 border-t-2 border-slate-300 dark:border-zinc-700 font-bold text-slate-900 dark:text-white">
             <tr>
-              <td class="p-3 text-slate-500 dark:text-zinc-400 uppercase tracking-wider text-xs">TOTAUX DU MOIS</td>
-              <td colspan="3" class="p-3 text-right text-slate-600 dark:text-zinc-400 font-medium">Cumul presté :</td>
-              <td id="footTotal" class="p-3 text-center text-blue-900 dark:text-blue-200 bg-blue-50/70 dark:bg-blue-950/30 border-x border-slate-200 dark:border-zinc-800 font-mono tabular-nums text-base font-extrabold">00:00:00</td>
-              <td id="footRecup" class="p-3 text-center text-sky-700 dark:text-sky-300 font-mono tabular-nums font-bold">00:00:00</td>
-              <td id="footSup" class="p-3 text-center text-emerald-700 dark:text-emerald-400 font-mono tabular-nums font-extrabold">00:00:00</td>
-              <td id="footNegatif" class="p-3 text-center text-amber-700 dark:text-amber-400 font-mono tabular-nums font-extrabold">00:00:00</td>
-              <td colspan="2" class="p-3 text-slate-700 dark:text-zinc-300 text-xs font-normal">
+              <td class="p-2.5 text-slate-500 dark:text-zinc-400 uppercase tracking-wider text-xs">TOTAUX DU MOIS</td>
+              <td colspan="3" class="p-2.5 text-right text-slate-600 dark:text-zinc-400 font-medium">Cumul presté :</td>
+              <td id="footTotal" class="p-2.5 text-center text-blue-900 dark:text-blue-200 bg-blue-50/70 dark:bg-blue-950/30 border-x border-slate-200 dark:border-zinc-800 font-mono tabular-nums text-sm font-extrabold">00:00:00</td>
+              <td id="footRecup" class="p-2.5 text-center text-sky-700 dark:text-sky-300 font-mono tabular-nums font-bold">00:00:00</td>
+              <td id="footSup" class="p-2.5 text-center text-emerald-700 dark:text-emerald-400 font-mono tabular-nums font-extrabold">00:00:00</td>
+              <td id="footNegatif" class="p-2.5 text-center text-amber-700 dark:text-amber-400 font-mono tabular-nums font-extrabold">00:00:00</td>
+              <td class="p-2.5 text-slate-700 dark:text-zinc-300 text-xs font-normal">
                 Solde net du mois : <span id="footSoldeNet" class="font-bold text-slate-900 dark:text-white font-mono tabular-nums text-sm">00:00:00</span>
               </td>
+              <td class="no-print col-action"></td>
+            </tr>
+            <tr class="border-t border-slate-200 dark:border-zinc-800 text-xs bg-slate-50 dark:bg-zinc-900/60 font-semibold">
+              <td colspan="4" class="p-2 text-right text-slate-600 dark:text-zinc-400">
+                Solde reporté du mois précédent :
+              </td>
+              <td id="footSoldePrec" class="p-2 text-center font-mono tabular-nums text-slate-800 dark:text-zinc-200 font-bold">
+                00:00:00
+              </td>
+              <td colspan="2" class="p-2 text-right text-slate-800 dark:text-zinc-200 uppercase tracking-wide font-extrabold">
+                SOLDE CUMULÉ DÉFINITIF :
+              </td>
+              <td class="p-2 text-left font-mono tabular-nums font-black text-sm text-slate-900 dark:text-white" id="footSoldeCumule">
+                00:00:00
+              </td>
+              <td class="no-print col-action"></td>
             </tr>
           </tfoot>
         </table>
@@ -356,17 +541,35 @@
     </div>
 
     <!-- PRINT SIGNATURE SECTION -->
-    <div class="print-only mt-8 pt-4 border-t border-gray-300">
-      <div class="grid grid-cols-2 gap-8 text-sm">
-        <div class="border border-gray-300 rounded p-4 h-32">
-          <p class="font-bold text-gray-800">Signature du collaborateur :</p>
-          <p class="text-xs text-gray-500 mt-1">Date et mention "Lu et approuvé"</p>
+    <div class="print-only print-signature-box mt-2 pt-1.5 border-t border-slate-400">
+      <div class="grid grid-cols-2 gap-3 text-xs">
+        <div class="border border-slate-400 rounded p-2 bg-white flex flex-col justify-between h-20">
+          <div>
+            <div class="flex justify-between items-center border-b border-slate-200 pb-0.5">
+              <span class="font-bold text-slate-900 uppercase tracking-wider text-[9px]">1. Visa du Collaborateur</span>
+              <span class="text-[8px] text-slate-500">« Lu et approuvé, certifié exact »</span>
+            </div>
+            <p class="text-[9px] text-slate-600 mt-1">Date : _____ / _____ / 20____</p>
+          </div>
+          <div class="border-b border-dashed border-slate-400 mt-2 text-[8px] text-slate-400 flex justify-between">
+            <span>Signature du collaborateur :</span>
+          </div>
         </div>
-        <div class="border border-gray-300 rounded p-4 h-32">
-          <p class="font-bold text-gray-800">Validation Responsable / Direction :</p>
-          <p class="text-xs text-gray-500 mt-1">Date et signature</p>
+
+        <div class="border border-slate-400 rounded p-2 bg-white flex flex-col justify-between h-20">
+          <div>
+            <div class="flex justify-between items-center border-b border-slate-200 pb-0.5">
+              <span class="font-bold text-slate-900 uppercase tracking-wider text-[9px]">2. Validation Responsable / Direction</span>
+              <span class="text-[8px] text-slate-500">« Bon pour accord et validation »</span>
+            </div>
+            <p class="text-[9px] text-slate-600 mt-1">Date : _____ / _____ / 20____</p>
+          </div>
+          <div class="border-b border-dashed border-slate-400 mt-2 text-[8px] text-slate-400 flex justify-between">
+            <span>Cachet &amp; Signature de la Direction :</span>
+          </div>
         </div>
       </div>
+      <p class="text-center text-[7.5px] text-slate-400 mt-1">Document officiel généré par Work Calculator le <span class="print-edition-footer"></span> • Feuillets mensuels d'émargement</p>
     </div>
 
     <!-- BOTTOM TIPS BAR -->
@@ -984,11 +1187,11 @@
 
         let badge = '';
         if (isToday) {
-          badge = `<span class="inline-flex items-center gap-1 text-[10px] font-extrabold text-emerald-800 dark:text-emerald-300 bg-emerald-100 dark:bg-emerald-950/80 px-2 py-0.5 rounded-full border border-emerald-300 dark:border-emerald-700">📍 Aujourd'hui</span>`;
+          badge = `<span class="badge-today inline-flex items-center gap-1 text-[10px] font-extrabold text-emerald-800 dark:text-emerald-300 bg-emerald-100 dark:bg-emerald-950/80 px-2 py-0.5 rounded-full border border-emerald-300 dark:border-emerald-700">📍 Aujourd'hui</span>`;
         } else if (day.isHoliday) {
-          badge = `<span class="inline-flex items-center gap-1 text-[10px] text-indigo-700 dark:text-indigo-300 bg-indigo-100/80 dark:bg-indigo-950 px-2 py-0.5 rounded-full border border-indigo-300 dark:border-indigo-800 font-bold truncate max-w-[130px]" title="${day.holidayName}">🎉 ${day.holidayName}</span>`;
+          badge = `<span class="badge-holiday inline-flex items-center gap-1 text-[10px] text-indigo-700 dark:text-indigo-300 bg-indigo-100/80 dark:bg-indigo-950 px-2 py-0.5 rounded-full border border-indigo-300 dark:border-indigo-800 font-bold truncate max-w-[130px]" title="${day.holidayName}">🎉 ${day.holidayName}</span>`;
         } else if (day.isWeekend) {
-          badge = `<span class="inline-block text-[10px] font-semibold text-slate-400 dark:text-zinc-500 bg-slate-200/50 dark:bg-zinc-800/60 px-1.5 py-0.2 rounded uppercase">Week-end</span>`;
+          badge = `<span class="badge-weekend inline-block text-[10px] font-semibold text-slate-400 dark:text-zinc-500 bg-slate-200/50 dark:bg-zinc-800/60 px-1.5 py-0.2 rounded uppercase">Week-end</span>`;
         }
 
         const isFilled = !!(day.depart || day.rentree || day.hRecup || (day.chantier && !day.isHoliday));
@@ -1028,7 +1231,7 @@
           <td class="p-1.5">
             <input type="text" list="listChantiers" data-index="${index}" data-field="chantier" class="chantier-input w-full bg-white dark:bg-zinc-800/90 border-2 border-slate-200 dark:border-zinc-700 rounded-xl px-2.5 py-1.5 text-slate-800 dark:text-zinc-200 outline-none focus:ring-2 focus:ring-emerald-500/40 focus:border-emerald-500 text-xs font-semibold shadow-sm cursor-pointer transition hover:border-slate-300 dark:hover:border-zinc-600" placeholder="Chantier ou absence..." value="${day.chantier || ''}" autocomplete="off" />
           </td>
-          <td class="p-1.5 text-center no-print whitespace-nowrap">
+          <td class="p-1.5 text-center no-print col-action whitespace-nowrap">
             ${isFilled ? `
               <button data-index="${index}" class="btn-clear-day px-2 py-1 text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/40 rounded-lg text-xs font-semibold transition" title="Effacer cette journée">
                 ✕ Effacer
@@ -1103,9 +1306,68 @@
         avgEl.textContent = `Moyenne : ${minutesToTimeString(avgMin, false)} / jour`;
       }
 
-      document.getElementById('printWorkerName').textContent = settings.userName;
-      document.getElementById('printMonthYear').textContent = `${MONTH_NAMES[currentMonth - 1]} ${currentYear}`;
-      document.getElementById('printBaseHours').textContent = `${settings.standardDailyHours}h00`;
+      // Update print & table footer elements
+      const printWorker = document.getElementById('printWorkerName');
+      if (printWorker) printWorker.textContent = settings.userName;
+
+      const printMY = document.getElementById('printMonthYear');
+      if (printMY) printMY.textContent = `${MONTH_NAMES[currentMonth - 1]} ${currentYear}`;
+
+      const printBH = document.getElementById('printBaseHours');
+      if (printBH) printBH.textContent = `${settings.standardDailyHours}h00`;
+
+      const printCntry = document.getElementById('printCountry');
+      if (printCntry) {
+        const countryNames = { BE: 'Belgique (BE)', FR: 'France (FR)', LU: 'Luxembourg (LU)', CUSTOM: 'Personnalisé' };
+        printCntry.textContent = countryNames[settings.country] || settings.country;
+      }
+
+      const now = new Date();
+      const printDateStr = `${now.toLocaleDateString('fr-BE')} à ${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`;
+      const printDateEdition = document.getElementById('printDateEdition');
+      if (printDateEdition) printDateEdition.textContent = `Édité le ${printDateStr}`;
+      document.querySelectorAll('.print-edition-footer').forEach(el => el.textContent = printDateStr);
+
+      const pWorked = document.getElementById('printKpiWorked');
+      if (pWorked) pWorked.textContent = sum.totalWorkedFormatted;
+
+      const pWorkedDays = document.getElementById('printKpiWorkedDays');
+      if (pWorkedDays) pWorkedDays.textContent = `${sum.workedDaysCount} j presté(s)`;
+
+      const pSup = document.getElementById('printKpiSup');
+      if (pSup) pSup.textContent = sum.totalSupFormatted;
+
+      const pNeg = document.getElementById('printKpiNegatif');
+      if (pNeg) pNeg.textContent = sum.totalNegatifFormatted;
+
+      const pRecup = document.getElementById('printKpiRecup');
+      if (pRecup) pRecup.textContent = sum.totalRecupFormatted;
+
+      const pSoldePrec = document.getElementById('printKpiSoldePrec');
+      if (pSoldePrec) pSoldePrec.textContent = currentSheet.soldeMoisPrecedent || '00:00:00';
+
+      const pSoldeCumule = document.getElementById('printKpiSoldeCumule');
+      if (pSoldeCumule) pSoldeCumule.textContent = sum.soldeCumuleFormatted;
+
+      const pStatus = document.getElementById('printKpiStatus');
+      if (pStatus) {
+        if (sum.soldeCumuleMinutes > 0) {
+          pStatus.textContent = 'Crédit d’heures (+)';
+          pStatus.className = 'text-[8px] font-bold text-emerald-700';
+        } else if (sum.soldeCumuleMinutes < 0) {
+          pStatus.textContent = 'Débit d’heures (-)';
+          pStatus.className = 'text-[8px] font-bold text-amber-700';
+        } else {
+          pStatus.textContent = 'Solde équilibré (0)';
+          pStatus.className = 'text-[8px] font-semibold text-slate-600';
+        }
+      }
+
+      // Footers
+      const fSoldePrec = document.getElementById('footSoldePrec');
+      if (fSoldePrec) fSoldePrec.textContent = currentSheet.soldeMoisPrecedent || '00:00:00';
+      const fSoldeCumule = document.getElementById('footSoldeCumule');
+      if (fSoldeCumule) fSoldeCumule.textContent = sum.soldeCumuleFormatted;
     }
 
     function attachTableListeners() {
@@ -1366,7 +1628,10 @@
 
       // Exports
       document.getElementById('btnExportCsv').addEventListener('click', exportCsv);
-      document.getElementById('btnPrintPdf').addEventListener('click', () => window.print());
+      document.getElementById('btnPrintPdf').addEventListener('click', () => {
+        updateKpisAndFooter();
+        window.print();
+      });
 
       // Settings Modal
       const modal = document.getElementById('modalSettings');
