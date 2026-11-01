@@ -12,11 +12,24 @@ Bienvenue dans le guide d'utilisation de **Work Calculator**, votre application 
 
 ---
 
-## 2. Astuces de Saisie Ultra-Rapide
+## 2. Double Mode de Saisie des Heures (Au Choix)
 
-Vous n'avez pas besoin de taper les deux-points `:` ou les zéros inutiles :
+Chaque cellule d'heure (**Départ**, **Rentrée**, **Pause**, **H Récup**) offre désormais une double possibilité selon votre préférence :
+
+### Option A : Sélection dans la liste déroulante (sans taper)
+* Cliquez sur la **petite flèche `▼`** située à droite de la case (ou cliquez/double-cliquez directement dans la case).
+* Le menu déroulant s'ouvre avec les créneaux par pas de 15 minutes (identiques à l'Excel d'origine) :
+  * **Départ :** de `06:00` à `18:00`
+  * **Rentrée :** de `12:00` à `20:00`
+  * **Pause repas :** de `00:00` à `02:00`
+  * **H Récupérer :** de `00:30` à `08:00`
+* Cliquez sur l'heure désirée : le calcul s'actualise immédiatement !
+
+### Option B : Saisie ultra-rapide au clavier
+Si vous préférez taper au clavier ou indiquer une heure précise (ex. `07:52`) :
 * Tapez `8` puis `Tab` $\rightarrow$ l'application écrit automatiquement **08:00**.
 * Tapez `815` puis `Tab` $\rightarrow$ l'application écrit automatiquement **08:15**.
+* Tapez `752` puis `Tab` $\rightarrow$ l'application écrit automatiquement **07:52**.
 * Tapez `1630` puis `Tab` $\rightarrow$ l'application écrit automatiquement **16:30**.
 * La touche **Tabulation** vous fait passer directement à la case suivante.
 * La touche **Entrée** valide la saisie de la cellule active.
