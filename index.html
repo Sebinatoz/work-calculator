@@ -283,37 +283,57 @@
 
     </div>
 
-    <!-- MAIN WORKSHEET TABLE -->
-    <div class="bg-white dark:bg-zinc-900/90 border border-slate-200/90 dark:border-zinc-800 rounded-2xl overflow-hidden shadow-sm table-container">
+    <!-- ERGONOMIC MONTH PROGRESS & QUICK STATS BAR -->
+    <div class="no-print bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-2xl p-3.5 flex flex-wrap items-center justify-between gap-3 shadow-sm">
+      <div class="flex items-center gap-3">
+        <span class="text-xs font-bold text-slate-800 dark:text-zinc-200" id="progressText">
+          Avancement du mois : 0 jour(s) presté(s)
+        </span>
+        <div class="w-40 bg-slate-100 dark:bg-zinc-800 h-2.5 rounded-full overflow-hidden border border-slate-200 dark:border-zinc-700">
+          <div id="progressBar" class="bg-gradient-to-r from-emerald-500 to-teal-400 h-full rounded-full transition-all duration-500" style="width: 0%"></div>
+        </div>
+      </div>
+      <div class="flex items-center gap-4 text-xs font-semibold text-slate-600 dark:text-zinc-400">
+        <span id="statAverage" class="font-mono text-slate-800 dark:text-zinc-200">Moyenne : 00:00:00 / jour</span>
+        <span class="text-slate-300 dark:text-zinc-700">|</span>
+        <button id="btnScrollToday" class="text-emerald-600 dark:text-emerald-400 hover:text-emerald-700 dark:hover:text-emerald-300 font-bold flex items-center gap-1 transition">
+          <span>📍</span>
+          <span>Aller à aujourd'hui</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- MAIN WORKSHEET TABLE (HIGH VISIBILITY & ERGONOMICS) -->
+    <div class="bg-white dark:bg-zinc-900/95 border-2 border-slate-200/90 dark:border-zinc-800 rounded-2xl overflow-hidden shadow-md table-container">
       <div class="overflow-x-auto">
-        <table class="w-full text-left border-collapse text-xs">
+        <table class="w-full text-left border-collapse text-sm">
           <thead>
-            <tr class="bg-slate-100/80 dark:bg-zinc-900 text-slate-600 dark:text-zinc-400 font-semibold border-b border-slate-200 dark:border-zinc-800 uppercase tracking-wider text-[11px]">
-              <th class="p-3 w-32">Date</th>
-              <th class="p-3 w-28">Départ</th>
-              <th class="p-3 w-28">Rentrée</th>
-              <th class="p-3 w-28">Pause</th>
-              <th class="p-3 w-24 text-center font-bold text-slate-900 dark:text-white">Total H</th>
-              <th class="p-3 w-28">H Récup.</th>
-              <th class="p-3 w-24 text-center text-emerald-600 dark:text-emerald-400 font-bold">H Sup</th>
-              <th class="p-3 w-24 text-center text-amber-600 dark:text-amber-400 font-bold">H Négatif</th>
-              <th class="p-3 min-w-[170px]">Chantier / Type</th>
-              <th class="p-3 w-14 no-print text-center">Action</th>
+            <tr class="bg-slate-100 dark:bg-zinc-900/90 text-slate-700 dark:text-zinc-300 font-bold border-b-2 border-slate-200 dark:border-zinc-800 text-xs uppercase tracking-wider">
+              <th class="py-3.5 px-3.5 w-36">📅 Date</th>
+              <th class="py-3.5 px-2 w-28 text-center">⏰ Départ</th>
+              <th class="py-3.5 px-2 w-28 text-center">🏁 Rentrée</th>
+              <th class="py-3.5 px-2 w-28 text-center">☕ Pause</th>
+              <th class="py-3.5 px-3 w-28 text-center font-extrabold bg-blue-50/70 dark:bg-blue-950/30 text-blue-900 dark:text-blue-200 border-x border-slate-200 dark:border-zinc-800">⏱️ Total H</th>
+              <th class="py-3.5 px-2 w-28 text-center text-sky-800 dark:text-sky-300">🏖️ H Récup.</th>
+              <th class="py-3.5 px-2 w-24 text-center text-emerald-800 dark:text-emerald-300 font-extrabold">🟢 H Sup</th>
+              <th class="py-3.5 px-2 w-24 text-center text-amber-800 dark:text-amber-300 font-extrabold">🟠 H Négatif</th>
+              <th class="py-3.5 px-3 min-w-[190px]">📍 Chantier / Absence</th>
+              <th class="py-3.5 px-2 w-28 no-print text-center">⚡ Action</th>
             </tr>
           </thead>
-          <tbody id="tableBody" class="divide-y divide-slate-100 dark:divide-zinc-800/60">
+          <tbody id="tableBody" class="divide-y divide-slate-100 dark:divide-zinc-800/80">
             <!-- Dynamically populated rows -->
           </tbody>
-          <tfoot class="bg-slate-100/90 dark:bg-zinc-900 border-t-2 border-slate-300 dark:border-zinc-700 font-bold text-slate-800 dark:text-zinc-100">
+          <tfoot class="bg-slate-100 dark:bg-zinc-900 border-t-2 border-slate-300 dark:border-zinc-700 font-bold text-slate-900 dark:text-white">
             <tr>
-              <td class="p-3 text-slate-500 dark:text-zinc-400 uppercase tracking-wider text-[11px]">TOTAUX DU MOIS</td>
-              <td colspan="3" class="p-3 text-right text-slate-500 dark:text-zinc-400 font-medium">Cumul presté :</td>
-              <td id="footTotal" class="p-3 text-center text-slate-900 dark:text-white font-mono tabular-nums text-sm">00:00:00</td>
-              <td id="footRecup" class="p-3 text-center text-sky-600 dark:text-sky-400 font-mono tabular-nums">00:00:00</td>
-              <td id="footSup" class="p-3 text-center text-emerald-600 dark:text-emerald-400 font-mono tabular-nums">00:00:00</td>
-              <td id="footNegatif" class="p-3 text-center text-amber-600 dark:text-amber-400 font-mono tabular-nums">00:00:00</td>
-              <td colspan="2" class="p-3 text-slate-600 dark:text-zinc-400 text-xs font-normal">
-                Solde net du mois : <span id="footSoldeNet" class="font-bold text-slate-900 dark:text-white font-mono tabular-nums">00:00:00</span>
+              <td class="p-3 text-slate-500 dark:text-zinc-400 uppercase tracking-wider text-xs">TOTAUX DU MOIS</td>
+              <td colspan="3" class="p-3 text-right text-slate-600 dark:text-zinc-400 font-medium">Cumul presté :</td>
+              <td id="footTotal" class="p-3 text-center text-blue-900 dark:text-blue-200 bg-blue-50/70 dark:bg-blue-950/30 border-x border-slate-200 dark:border-zinc-800 font-mono tabular-nums text-base font-extrabold">00:00:00</td>
+              <td id="footRecup" class="p-3 text-center text-sky-700 dark:text-sky-300 font-mono tabular-nums font-bold">00:00:00</td>
+              <td id="footSup" class="p-3 text-center text-emerald-700 dark:text-emerald-400 font-mono tabular-nums font-extrabold">00:00:00</td>
+              <td id="footNegatif" class="p-3 text-center text-amber-700 dark:text-amber-400 font-mono tabular-nums font-extrabold">00:00:00</td>
+              <td colspan="2" class="p-3 text-slate-700 dark:text-zinc-300 text-xs font-normal">
+                Solde net du mois : <span id="footSoldeNet" class="font-bold text-slate-900 dark:text-white font-mono tabular-nums text-sm">00:00:00</span>
               </td>
             </tr>
           </tfoot>
@@ -887,6 +907,9 @@
       const tbody = document.getElementById('tableBody');
       tbody.innerHTML = '';
 
+      const now = new Date();
+      const todayIso = `${now.getFullYear()}-${(now.getMonth() + 1).toString().padStart(2, '0')}-${now.getDate().toString().padStart(2, '0')}`;
+
       const optionsChantiers = [
         '<option value="">-- Choisir une option --</option>',
         '<optgroup label="👉 Absences & Congés">',
@@ -899,12 +922,15 @@
 
       currentSheet.days.forEach((day, index) => {
         const tr = document.createElement('tr');
+        const isToday = day.date === todayIso;
         
         let rowClass = 'hover:bg-slate-50 dark:hover:bg-zinc-800/40 transition-colors';
-        if (day.isWeekend) {
-          rowClass = 'bg-slate-100/60 dark:bg-zinc-900/60 text-slate-400 dark:text-zinc-500';
+        if (isToday) {
+          rowClass = 'row-today bg-emerald-50/50 dark:bg-emerald-950/20 border-l-4 border-l-emerald-500 font-medium hover:bg-emerald-100/40 dark:hover:bg-emerald-900/30 transition-colors';
+        } else if (day.isWeekend) {
+          rowClass = 'bg-slate-100/70 dark:bg-zinc-900/60 text-slate-400 dark:text-zinc-500 hover:bg-slate-100 dark:hover:bg-zinc-900/80 transition-colors';
         } else if (day.isHoliday) {
-          rowClass = 'bg-indigo-50/60 dark:bg-indigo-950/30 text-indigo-900 dark:text-indigo-300';
+          rowClass = 'bg-indigo-50/70 dark:bg-indigo-950/30 text-indigo-950 dark:text-indigo-200 hover:bg-indigo-100/40 dark:hover:bg-indigo-900/30 transition-colors';
         }
         tr.className = rowClass;
 
@@ -913,52 +939,60 @@
         const dateDisplay = `${dowName} ${d}/${m}`;
 
         let badge = '';
-        if (day.isHoliday) {
-          badge = `<span class="inline-flex items-center gap-1 text-[10px] text-indigo-600 dark:text-indigo-400 font-semibold truncate max-w-[120px]" title="${day.holidayName}">🎉 ${day.holidayName}</span>`;
+        if (isToday) {
+          badge = `<span class="inline-flex items-center gap-1 text-[10px] font-extrabold text-emerald-800 dark:text-emerald-300 bg-emerald-100 dark:bg-emerald-950/80 px-2 py-0.5 rounded-full border border-emerald-300 dark:border-emerald-700">📍 Aujourd'hui</span>`;
+        } else if (day.isHoliday) {
+          badge = `<span class="inline-flex items-center gap-1 text-[10px] text-indigo-700 dark:text-indigo-300 bg-indigo-100/80 dark:bg-indigo-950 px-2 py-0.5 rounded-full border border-indigo-300 dark:border-indigo-800 font-bold truncate max-w-[130px]" title="${day.holidayName}">🎉 ${day.holidayName}</span>`;
         } else if (day.isWeekend) {
-          badge = `<span class="inline-block text-[10px] font-semibold text-slate-400 dark:text-zinc-600 uppercase">Week-end</span>`;
+          badge = `<span class="inline-block text-[10px] font-semibold text-slate-400 dark:text-zinc-500 bg-slate-200/50 dark:bg-zinc-800/60 px-1.5 py-0.2 rounded uppercase">Week-end</span>`;
         }
 
         const isFilled = !!(day.depart || day.rentree || day.hRecup || (day.chantier && !day.isHoliday));
 
         tr.innerHTML = `
-          <td class="p-2.5 font-medium whitespace-nowrap">
-            <span class="font-semibold text-slate-800 dark:text-zinc-200">${dateDisplay}</span>
-            <div class="leading-tight">${badge}</div>
+          <td class="py-2 px-3 font-medium whitespace-nowrap">
+            <span class="font-bold text-slate-900 dark:text-zinc-100 text-sm">${dateDisplay}</span>
+            <div class="leading-tight mt-0.5">${badge}</div>
           </td>
           <td class="p-1.5">
-            <input type="text" list="listDepart" data-index="${index}" data-field="depart" class="time-input w-full bg-slate-50 dark:bg-zinc-800/90 border border-slate-200 dark:border-zinc-700/80 rounded-lg px-2.5 py-1 text-slate-900 dark:text-zinc-100 outline-none focus:ring-2 focus:ring-emerald-500/40 focus:border-emerald-500 text-center font-mono tabular-nums text-xs font-medium cursor-pointer shadow-sm transition" placeholder="00:00" value="${day.depart}" autocomplete="off" />
+            <input type="text" list="listDepart" data-index="${index}" data-field="depart" class="time-input w-full bg-white dark:bg-zinc-800/90 border-2 border-slate-200 dark:border-zinc-700 rounded-xl px-2.5 py-1.5 text-slate-900 dark:text-zinc-100 outline-none focus:ring-2 focus:ring-emerald-500/40 focus:border-emerald-500 text-center font-mono tabular-nums text-sm font-bold cursor-pointer shadow-sm transition hover:border-slate-300 dark:hover:border-zinc-600" placeholder="00:00" value="${day.depart}" autocomplete="off" />
           </td>
           <td class="p-1.5">
-            <input type="text" list="listRentree" data-index="${index}" data-field="rentree" class="time-input w-full bg-slate-50 dark:bg-zinc-800/90 border border-slate-200 dark:border-zinc-700/80 rounded-lg px-2.5 py-1 text-slate-900 dark:text-zinc-100 outline-none focus:ring-2 focus:ring-emerald-500/40 focus:border-emerald-500 text-center font-mono tabular-nums text-xs font-medium cursor-pointer shadow-sm transition" placeholder="00:00" value="${day.rentree}" autocomplete="off" />
+            <input type="text" list="listRentree" data-index="${index}" data-field="rentree" class="time-input w-full bg-white dark:bg-zinc-800/90 border-2 border-slate-200 dark:border-zinc-700 rounded-xl px-2.5 py-1.5 text-slate-900 dark:text-zinc-100 outline-none focus:ring-2 focus:ring-emerald-500/40 focus:border-emerald-500 text-center font-mono tabular-nums text-sm font-bold cursor-pointer shadow-sm transition hover:border-slate-300 dark:hover:border-zinc-600" placeholder="00:00" value="${day.rentree}" autocomplete="off" />
           </td>
           <td class="p-1.5">
-            <input type="text" list="listPause" data-index="${index}" data-field="pause" class="time-input w-full bg-slate-50 dark:bg-zinc-800/90 border border-slate-200 dark:border-zinc-700/80 rounded-lg px-2.5 py-1 text-slate-900 dark:text-zinc-100 outline-none focus:ring-2 focus:ring-emerald-500/40 focus:border-emerald-500 text-center font-mono tabular-nums text-xs font-medium cursor-pointer shadow-sm transition" placeholder="00:00" value="${day.pause}" autocomplete="off" />
+            <input type="text" list="listPause" data-index="${index}" data-field="pause" class="time-input w-full bg-white dark:bg-zinc-800/90 border-2 border-slate-200 dark:border-zinc-700 rounded-xl px-2.5 py-1.5 text-slate-900 dark:text-zinc-100 outline-none focus:ring-2 focus:ring-emerald-500/40 focus:border-emerald-500 text-center font-mono tabular-nums text-sm font-bold cursor-pointer shadow-sm transition hover:border-slate-300 dark:hover:border-zinc-600" placeholder="00:00" value="${day.pause}" autocomplete="off" />
           </td>
-          <td class="p-2.5 font-bold text-slate-900 dark:text-white font-mono tabular-nums text-center text-xs" id="cell-total-${index}">
+          <td class="py-2 px-3 font-bold text-blue-950 dark:text-blue-200 font-mono tabular-nums text-center text-sm bg-blue-50/60 dark:bg-blue-950/30 border-x border-slate-200 dark:border-zinc-800" id="cell-total-${index}">
             ${day.totalFormatted}
           </td>
           <td class="p-1.5">
-            <input type="text" list="listRecup" data-index="${index}" data-field="hRecup" class="time-input w-full bg-slate-50 dark:bg-zinc-800/90 border border-slate-200 dark:border-zinc-700/80 rounded-lg px-2.5 py-1 text-sky-700 dark:text-sky-300 outline-none focus:ring-2 focus:ring-sky-500/40 focus:border-sky-500 text-center font-mono tabular-nums text-xs font-semibold cursor-pointer shadow-sm transition" placeholder="00:00" value="${day.hRecup}" autocomplete="off" />
+            <input type="text" list="listRecup" data-index="${index}" data-field="hRecup" class="time-input w-full bg-white dark:bg-zinc-800/90 border-2 border-sky-200 dark:border-sky-900/70 rounded-xl px-2.5 py-1.5 text-sky-800 dark:text-sky-300 outline-none focus:ring-2 focus:ring-sky-500/40 focus:border-sky-500 text-center font-mono tabular-nums text-sm font-bold cursor-pointer shadow-sm transition hover:border-sky-300" placeholder="00:00" value="${day.hRecup}" autocomplete="off" />
           </td>
-          <td class="p-2.5 font-semibold text-emerald-600 dark:text-emerald-400 font-mono tabular-nums text-center text-xs" id="cell-sup-${index}">
-            ${day.hSupFormatted}
+          <td class="py-2 px-2 text-center" id="cell-sup-${index}">
+            ${day.hSupMinutes > 0 
+              ? `<span class="inline-block px-2 py-0.5 rounded-lg bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300 font-mono tabular-nums text-sm font-extrabold border border-emerald-300 dark:border-emerald-700/80">${day.hSupFormatted}</span>` 
+              : `<span class="text-slate-300 dark:text-zinc-600 font-mono text-xs tabular-nums">${day.hSupFormatted}</span>`
+            }
           </td>
-          <td class="p-2.5 font-semibold text-amber-600 dark:text-amber-400 font-mono tabular-nums text-center text-xs" id="cell-neg-${index}">
-            ${day.hNegatifFormatted}
+          <td class="py-2 px-2 text-center" id="cell-neg-${index}">
+            ${day.hNegatifMinutes > 0 
+              ? `<span class="inline-block px-2 py-0.5 rounded-lg bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-300 font-mono tabular-nums text-sm font-extrabold border border-amber-300 dark:border-amber-700/80">${day.hNegatifFormatted}</span>` 
+              : `<span class="text-slate-300 dark:text-zinc-600 font-mono text-xs tabular-nums">${day.hNegatifFormatted}</span>`
+            }
           </td>
           <td class="p-1.5">
-            <select data-index="${index}" data-field="chantier" class="w-full bg-slate-50 dark:bg-zinc-800/90 border border-slate-200 dark:border-zinc-700/80 rounded-lg px-2.5 py-1 text-slate-800 dark:text-zinc-200 outline-none focus:ring-2 focus:ring-emerald-500/40 focus:border-emerald-500 text-xs shadow-sm cursor-pointer transition">
+            <select data-index="${index}" data-field="chantier" class="w-full bg-white dark:bg-zinc-800/90 border-2 border-slate-200 dark:border-zinc-700 rounded-xl px-2.5 py-1.5 text-slate-800 dark:text-zinc-200 outline-none focus:ring-2 focus:ring-emerald-500/40 focus:border-emerald-500 text-xs font-semibold shadow-sm cursor-pointer transition hover:border-slate-300 dark:hover:border-zinc-600">
               ${optionsChantiers}
             </select>
           </td>
           <td class="p-1.5 text-center no-print whitespace-nowrap">
             ${isFilled ? `
-              <button data-index="${index}" class="btn-clear-day px-2 py-1 text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/40 rounded-lg text-[11px] font-medium transition" title="Effacer cette journée">
+              <button data-index="${index}" class="btn-clear-day px-2 py-1 text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/40 rounded-lg text-xs font-semibold transition" title="Effacer cette journée">
                 ✕ Effacer
               </button>
             ` : `
-              <button data-index="${index}" class="btn-fill-day px-2.5 py-1 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 dark:bg-emerald-950/60 dark:hover:bg-emerald-900/60 dark:text-emerald-300 rounded-lg text-[11px] font-bold border border-emerald-200 dark:border-emerald-800/80 transition shadow-sm" title="Remplir 8h (08:00 - 16:30 avec 30m pause)">
+              <button data-index="${index}" class="btn-fill-day px-2.5 py-1 bg-emerald-50 hover:bg-emerald-100 text-emerald-800 dark:bg-emerald-950/60 dark:hover:bg-emerald-900/60 dark:text-emerald-300 rounded-lg text-xs font-bold border border-emerald-200 dark:border-emerald-800/80 transition shadow-sm" title="Remplir 8h (08:00 - 16:30 avec 30m pause)">
                 + 8h
               </button>
             `}
@@ -1014,6 +1048,24 @@
       document.getElementById('footNegatif').textContent = sum.totalNegatifFormatted;
       document.getElementById('footSoldeNet').textContent = sum.soldeNetMoisFormatted;
 
+      // Update monthly progress bar & stats
+      let workingDaysInMonth = 0;
+      currentSheet.days.forEach(d => {
+        if (!d.isWeekend && !d.isHoliday) workingDaysInMonth++;
+      });
+      const pct = workingDaysInMonth > 0 ? Math.min(100, Math.round((sum.workedDaysCount / workingDaysInMonth) * 100)) : 0;
+      const pBar = document.getElementById('progressBar');
+      const pTxt = document.getElementById('progressText');
+      if (pBar && pTxt) {
+        pBar.style.width = `${pct}%`;
+        pTxt.textContent = `Avancement du mois : ${sum.workedDaysCount} / ${workingDaysInMonth} jours ouvrés (${pct}%)`;
+      }
+      const avgEl = document.getElementById('statAverage');
+      if (avgEl) {
+        const avgMin = sum.workedDaysCount > 0 ? Math.round(sum.totalWorkedMinutes / sum.workedDaysCount) : 0;
+        avgEl.textContent = `Moyenne : ${minutesToTimeString(avgMin, false)} / jour`;
+      }
+
       document.getElementById('printWorkerName').textContent = settings.userName;
       document.getElementById('printMonthYear').textContent = `${MONTH_NAMES[currentMonth - 1]} ${currentYear}`;
       document.getElementById('printBaseHours').textContent = `${settings.standardDailyHours}h00`;
@@ -1041,13 +1093,30 @@
       document.querySelectorAll('.time-input').forEach(input => {
         input.addEventListener('change', (e) => updateCell(e.target, false));
         input.addEventListener('blur', (e) => updateCell(e.target, true));
+        input.addEventListener('focus', (e) => {
+          e.target.select();
+        });
         input.addEventListener('click', (e) => {
           if (e.target.showPicker) {
             try { e.target.showPicker(); } catch {}
           }
         });
         input.addEventListener('keydown', (e) => {
-          if (e.key === 'Enter') e.target.blur();
+          const idx = parseInt(e.target.dataset.index, 10);
+          const field = e.target.dataset.field;
+          if (e.key === 'ArrowDown') {
+            e.preventDefault();
+            const next = document.querySelector(`.time-input[data-index="${idx + 1}"][data-field="${field}"]`);
+            if (next) next.focus();
+          } else if (e.key === 'ArrowUp') {
+            e.preventDefault();
+            const prev = document.querySelector(`.time-input[data-index="${idx - 1}"][data-field="${field}"]`);
+            if (prev) prev.focus();
+          } else if (e.key === 'Enter') {
+            e.target.blur();
+            const next = document.querySelector(`.time-input[data-index="${idx + 1}"][data-field="${field}"]`);
+            if (next) next.focus();
+          }
         });
       });
 
@@ -1228,6 +1297,18 @@
       });
       document.getElementById('btnGotItHelp').addEventListener('click', () => {
         modalHelp.classList.add('hidden');
+      });
+
+      // Quick scroll to today
+      document.getElementById('btnScrollToday')?.addEventListener('click', () => {
+        const todayEl = document.querySelector('.row-today');
+        if (todayEl) {
+          todayEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          todayEl.classList.add('ring-4', 'ring-emerald-400', 'dark:ring-emerald-500');
+          setTimeout(() => todayEl.classList.remove('ring-4', 'ring-emerald-400', 'dark:ring-emerald-500'), 1500);
+        } else {
+          alert("La date d'aujourd'hui n'est pas dans le mois actuellement affiché.");
+        }
       });
 
       document.getElementById('btnSaveSettings').addEventListener('click', () => {
