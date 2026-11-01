@@ -126,11 +126,16 @@
         <div>
           <div class="flex items-center gap-2">
             <h1 class="text-base font-bold text-slate-900 dark:text-white tracking-tight">Work Calculator</h1>
-            <span id="headerWorkerName" class="text-xs px-2 py-0.5 rounded-full font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200 dark:bg-emerald-950/60 dark:text-emerald-400 dark:border-emerald-800/80">
+            <span id="headerWorkerName" class="text-xs px-2.5 py-0.5 rounded-full font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200 dark:bg-emerald-950/60 dark:text-emerald-400 dark:border-emerald-800/80">
               Didier
             </span>
+            <!-- Live Auto-Save Indicator -->
+            <div id="saveIndicator" class="flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-medium bg-slate-100 text-slate-600 dark:bg-zinc-800 dark:text-zinc-300 border border-slate-200 dark:border-zinc-700 transition-all duration-300">
+              <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+              <span id="saveIndicatorText">Enregistré auto</span>
+            </div>
           </div>
-          <p class="text-[11px] text-slate-500 dark:text-zinc-400">Prestations & Heures de travail</p>
+          <p class="text-[11px] text-slate-500 dark:text-zinc-400">Suivi simple et automatique des heures</p>
         </div>
       </div>
 
@@ -161,35 +166,39 @@
 
       <!-- Action Buttons + Theme Toggle -->
       <div class="flex items-center space-x-2">
-        <button id="btnQuickStandard" title="Remplir automatiquement du Lun au Ven" class="px-3 py-1.5 rounded-lg bg-white dark:bg-zinc-900 hover:bg-slate-50 dark:hover:bg-zinc-800 text-slate-700 dark:text-zinc-200 text-xs font-medium transition border border-slate-200 dark:border-zinc-800 shadow-sm flex items-center gap-1.5">
-          <span class="text-amber-500">⚡</span>
-          <span>Semaine type</span>
+        <button id="btnQuickStandard" title="Remplir automatiquement tous les jours de semaine (du lundi au vendredi) avec 8h" class="px-3 py-1.5 rounded-lg bg-emerald-50 hover:bg-emerald-100 dark:bg-emerald-950/60 dark:hover:bg-emerald-900/60 text-emerald-800 dark:text-emerald-300 text-xs font-semibold transition border border-emerald-200 dark:border-emerald-800 shadow-sm flex items-center gap-1.5">
+          <span>⚡</span>
+          <span>Remplir Lun-Ven (8h)</span>
         </button>
 
-        <button id="btnExportCsv" title="Exporter au format Excel / CSV" class="px-3 py-1.5 rounded-lg bg-white dark:bg-zinc-900 hover:bg-slate-50 dark:hover:bg-zinc-800 text-slate-700 dark:text-zinc-200 text-xs font-medium transition border border-slate-200 dark:border-zinc-800 shadow-sm flex items-center gap-1.5">
+        <button id="btnExportCsv" title="Télécharger le fichier pour Excel" class="px-3 py-1.5 rounded-lg bg-white dark:bg-zinc-900 hover:bg-slate-50 dark:hover:bg-zinc-800 text-slate-700 dark:text-zinc-200 text-xs font-medium transition border border-slate-200 dark:border-zinc-800 shadow-sm flex items-center gap-1.5">
           <svg class="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
-          <span>Excel/CSV</span>
+          <span>Pour Excel</span>
         </button>
 
-        <button id="btnPrintPdf" title="Imprimer ou enregistrer en PDF" class="px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-medium transition shadow-md shadow-emerald-600/20 flex items-center gap-1.5">
+        <button id="btnPrintPdf" title="Imprimer ou enregistrer en PDF propre" class="px-3 py-1.5 rounded-lg bg-slate-900 hover:bg-slate-800 dark:bg-zinc-100 dark:hover:bg-white text-white dark:text-zinc-900 text-xs font-medium transition shadow-sm flex items-center gap-1.5">
           <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/></svg>
-          <span>PDF</span>
+          <span>Imprimer / PDF</span>
+        </button>
+
+        <!-- Help Button -->
+        <button id="btnHelp" title="Comment utiliser le calculateur ?" class="px-2.5 py-1.5 rounded-lg bg-amber-50 hover:bg-amber-100 dark:bg-amber-950/40 dark:hover:bg-amber-900/50 text-amber-800 dark:text-amber-300 text-xs font-semibold transition border border-amber-200 dark:border-amber-800 shadow-sm flex items-center gap-1">
+          <span>❓</span>
+          <span>Aide</span>
         </button>
 
         <!-- Theme Toggle (Sun/Moon) -->
-        <button id="btnToggleTheme" title="Changer de thème (Clair / Sombre)" class="p-2 rounded-lg bg-white dark:bg-zinc-900 hover:bg-slate-100 dark:hover:bg-zinc-800 text-slate-600 dark:text-zinc-300 transition border border-slate-200 dark:border-zinc-800 shadow-sm">
-          <!-- Sun icon (shown in dark mode) -->
+        <button id="btnToggleTheme" title="Changer le style (Clair / Sombre)" class="p-2 rounded-lg bg-white dark:bg-zinc-900 hover:bg-slate-100 dark:hover:bg-zinc-800 text-slate-600 dark:text-zinc-300 transition border border-slate-200 dark:border-zinc-800 shadow-sm">
           <svg id="iconSun" class="w-4 h-4 hidden dark:block text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
           </svg>
-          <!-- Moon icon (shown in light mode) -->
           <svg id="iconMoon" class="w-4 h-4 block dark:hidden text-slate-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
           </svg>
         </button>
 
         <!-- Settings Cog -->
-        <button id="btnSettings" title="Paramètres de l'application" class="p-2 rounded-lg bg-white dark:bg-zinc-900 hover:bg-slate-100 dark:hover:bg-zinc-800 text-slate-600 dark:text-zinc-300 transition border border-slate-200 dark:border-zinc-800 shadow-sm">
+        <button id="btnSettings" title="Paramètres du collaborateur" class="p-2 rounded-lg bg-white dark:bg-zinc-900 hover:bg-slate-100 dark:hover:bg-zinc-800 text-slate-600 dark:text-zinc-300 transition border border-slate-200 dark:border-zinc-800 shadow-sm">
           <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
         </button>
       </div>
@@ -411,6 +420,70 @@
       <div class="border-t border-slate-200 dark:border-zinc-800 pt-3 flex justify-end gap-2">
         <button id="btnSaveSettings" class="px-5 py-2 bg-emerald-600 hover:bg-emerald-500 rounded-lg text-white font-semibold transition shadow-md shadow-emerald-600/20">
           Enregistrer
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- HELP MODAL (SUPER SIMPLE FOR BEGINNERS) -->
+  <div id="modalHelp" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+    <div class="bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-2xl max-w-lg w-full p-6 shadow-2xl flex flex-col gap-4 max-h-[90vh] overflow-y-auto">
+      
+      <div class="flex items-center justify-between border-b border-slate-200 dark:border-zinc-800 pb-3">
+        <h2 class="text-base font-bold text-slate-900 dark:text-white flex items-center gap-2">
+          <span>❓</span>
+          <span>Guide Express : Comment utiliser l'application ?</span>
+        </h2>
+        <button id="btnCloseHelp" class="text-slate-400 hover:text-slate-600 dark:hover:text-white p-1 rounded-lg">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+      </div>
+
+      <div class="space-y-3 text-xs leading-relaxed">
+        <div class="p-3 rounded-xl bg-slate-50 dark:bg-zinc-800/80 border border-slate-200 dark:border-zinc-700/80">
+          <p class="font-bold text-slate-800 dark:text-zinc-100 flex items-center gap-1.5 mb-1 text-sm">
+            <span>📅</span> 1. Choisissez votre mois
+          </p>
+          <p class="text-slate-600 dark:text-zinc-300">
+            En haut de l'écran, utilisez les flèches ou le menu pour choisir le mois et l'année (ex. <em>Janvier 2026</em>). Le solde de vos heures du mois précédent est <strong>reporté tout seul</strong> !
+          </p>
+        </div>
+
+        <div class="p-3 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800/80">
+          <p class="font-bold text-emerald-900 dark:text-emerald-300 flex items-center gap-1.5 mb-1 text-sm">
+            <span>⚡</span> 2. Remplissez vos journées en 1 clic
+          </p>
+          <ul class="text-emerald-800 dark:text-emerald-200 space-y-1 list-disc list-inside">
+            <li>Cliquez sur le bouton vert <strong>« + 8h »</strong> pour inscrire automatiquement 08:00 - 16:30 avec 30 min de pause.</li>
+            <li>Ou cliquez sur la petite flèche <strong>▼</strong> pour choisir une heure dans la liste.</li>
+            <li>Vous pouvez aussi taper directement au clavier (ex. taper <code>815</code> donnera automatiquement <code>08:15</code>).</li>
+            <li>Le bouton en haut <strong>« Remplir Lun-Ven (8h) »</strong> remplit tous les jours ouvrés du mois d'un seul coup !</li>
+          </ul>
+        </div>
+
+        <div class="p-3 rounded-xl bg-blue-50 dark:bg-blue-950/40 border border-blue-200 dark:border-blue-800/80">
+          <p class="font-bold text-blue-900 dark:text-blue-300 flex items-center gap-1.5 mb-1 text-sm">
+            <span>💾</span> 3. Aucune inquiétude : tout s'enregistre tout seul !
+          </p>
+          <p class="text-blue-800 dark:text-blue-200">
+            <strong>Vous n'avez aucun bouton « Enregistrer » à chercher.</strong> Chaque fois que vous modifiez une heure, elle est instantanément mémorisée sur cet ordinateur. Vous pouvez fermer la fenêtre ou éteindre le PC à tout moment sans rien perdre.
+          </p>
+        </div>
+
+        <div class="p-3 rounded-xl bg-purple-50 dark:bg-purple-950/40 border border-purple-200 dark:border-purple-800/80">
+          <p class="font-bold text-purple-900 dark:text-purple-300 flex items-center gap-1.5 mb-1 text-sm">
+            <span>🖨️</span> 4. À la fin du mois
+          </p>
+          <p class="text-purple-800 dark:text-purple-200">
+            Cliquez sur <strong>« Imprimer / PDF »</strong> pour obtenir une feuille propre prête à signer pour vous et votre responsable, ou <strong>« Pour Excel »</strong> si la direction souhaite le fichier tableur.
+          </p>
+        </div>
+      </div>
+
+      <div class="border-t border-slate-200 dark:border-zinc-800 pt-3 flex justify-end">
+        <button id="btnGotItHelp" class="px-5 py-2 bg-emerald-600 hover:bg-emerald-500 rounded-lg text-white font-semibold transition shadow-md shadow-emerald-600/20">
+          J'ai compris, c'est parti !
         </button>
       </div>
 
@@ -755,6 +828,20 @@
     function saveCurrentSheet() {
       if (!currentSheet) return;
       localStorage.setItem(`${SHEETS_PREFIX}${currentSheet.id}`, JSON.stringify(currentSheet));
+      showSavedIndicator();
+    }
+
+    function showSavedIndicator() {
+      const el = document.getElementById('saveIndicator');
+      const txt = document.getElementById('saveIndicatorText');
+      if (!el || !txt) return;
+      const now = new Date();
+      const timeStr = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}:${now.getSeconds().toString().padStart(2, '0')}`;
+      txt.textContent = `Enregistré à ${timeStr} ✓`;
+      el.className = 'flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-700 transition-all duration-300 ring-2 ring-emerald-400/40';
+      setTimeout(() => {
+        el.className = 'flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-medium bg-slate-100 text-slate-600 dark:bg-zinc-800 dark:text-zinc-300 border border-slate-200 dark:border-zinc-700 transition-all duration-300';
+      }, 1200);
     }
 
     // --- POPULATE DATALISTS PRESETS ---
@@ -801,11 +888,11 @@
       tbody.innerHTML = '';
 
       const optionsChantiers = [
-        '<option value="">-- Sélectionner --</option>',
-        '<optgroup label="Absences & Congés">',
+        '<option value="">-- Choisir une option --</option>',
+        '<optgroup label="👉 Absences & Congés">',
         ...settings.absenceTypes.map(a => `<option value="${a}">${a}</option>`),
         '</optgroup>',
-        '<optgroup label="Chantiers & Lieux">',
+        '<optgroup label="📍 Chantiers & Lieux">',
         ...settings.chantierList.map(c => `<option value="${c}">${c}</option>`),
         '</optgroup>'
       ].join('');
@@ -831,6 +918,8 @@
         } else if (day.isWeekend) {
           badge = `<span class="inline-block text-[10px] font-semibold text-slate-400 dark:text-zinc-600 uppercase">Week-end</span>`;
         }
+
+        const isFilled = !!(day.depart || day.rentree || day.hRecup || (day.chantier && !day.isHoliday));
 
         tr.innerHTML = `
           <td class="p-2.5 font-medium whitespace-nowrap">
@@ -863,10 +952,16 @@
               ${optionsChantiers}
             </select>
           </td>
-          <td class="p-1.5 text-center no-print">
-            <button data-index="${index}" class="btn-fill-day p-1.5 hover:bg-slate-200 dark:hover:bg-zinc-700 rounded-lg text-slate-400 hover:text-amber-500 transition" title="Remplir la journée standard (8h)">
-              ⚡
-            </button>
+          <td class="p-1.5 text-center no-print whitespace-nowrap">
+            ${isFilled ? `
+              <button data-index="${index}" class="btn-clear-day px-2 py-1 text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/40 rounded-lg text-[11px] font-medium transition" title="Effacer cette journée">
+                ✕ Effacer
+              </button>
+            ` : `
+              <button data-index="${index}" class="btn-fill-day px-2.5 py-1 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 dark:bg-emerald-950/60 dark:hover:bg-emerald-900/60 dark:text-emerald-300 rounded-lg text-[11px] font-bold border border-emerald-200 dark:border-emerald-800/80 transition shadow-sm" title="Remplir 8h (08:00 - 16:30 avec 30m pause)">
+                + 8h
+              </button>
+            `}
           </td>
         `;
 
@@ -898,17 +993,17 @@
 
       if (cumuleMin > 0) {
         kpiCumuleEl.className = 'text-2xl font-black text-emerald-600 dark:text-emerald-400 font-mono tabular-nums tracking-tight my-0.5';
-        document.getElementById('kpiStatus').textContent = 'Crédit d\'heures (+)';
+        document.getElementById('kpiStatus').textContent = `🟢 Vous avez ${sum.soldeCumuleFormatted.replace('+', '')} d'avance (à récupérer ou payé)`;
         cardCumuleEl.className = 'bg-emerald-50/80 dark:bg-emerald-950/20 border-2 border-emerald-500/40 rounded-2xl p-3.5 relative overflow-hidden shadow-sm flex flex-col justify-between';
         pulseEl.innerHTML = '<span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span><span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>';
       } else if (cumuleMin < 0) {
         kpiCumuleEl.className = 'text-2xl font-black text-amber-600 dark:text-amber-400 font-mono tabular-nums tracking-tight my-0.5';
-        document.getElementById('kpiStatus').textContent = 'Débit d\'heures (-)';
+        document.getElementById('kpiStatus').textContent = `🟠 Vous avez ${sum.soldeCumuleFormatted.replace('-', '')} de retard à rattraper`;
         cardCumuleEl.className = 'bg-amber-50/80 dark:bg-amber-950/20 border-2 border-amber-500/40 rounded-2xl p-3.5 relative overflow-hidden shadow-sm flex flex-col justify-between';
         pulseEl.innerHTML = '<span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span><span class="relative inline-flex rounded-full h-2 w-2 bg-amber-500"></span>';
       } else {
         kpiCumuleEl.className = 'text-2xl font-black text-slate-700 dark:text-zinc-200 font-mono tabular-nums tracking-tight my-0.5';
-        document.getElementById('kpiStatus').textContent = 'Solde équilibré (0)';
+        document.getElementById('kpiStatus').textContent = '⚪ Solde équilibré (pile à zéro)';
         cardCumuleEl.className = 'bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-2xl p-3.5 relative overflow-hidden shadow-sm flex flex-col justify-between';
         pulseEl.innerHTML = '<span class="relative inline-flex rounded-full h-2 w-2 bg-slate-400"></span>';
       }
@@ -966,12 +1061,27 @@
 
       document.querySelectorAll('.btn-fill-day').forEach(btn => {
         btn.addEventListener('click', (e) => {
-          const idx = parseInt(e.target.dataset.index, 10);
+          const idx = parseInt(e.currentTarget.dataset.index, 10);
           const day = currentSheet.days[idx];
           day.depart = '08:00';
           day.rentree = '16:30';
           day.pause = '00:30';
           day.chantier = day.chantier || 'Chantier Principal';
+
+          recalculateSheet();
+          renderTable();
+        });
+      });
+
+      document.querySelectorAll('.btn-clear-day').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          const idx = parseInt(e.currentTarget.dataset.index, 10);
+          const day = currentSheet.days[idx];
+          day.depart = '';
+          day.rentree = '';
+          day.pause = '';
+          day.hRecup = '';
+          if (!day.isHoliday) day.chantier = '';
 
           recalculateSheet();
           renderTable();
@@ -1106,6 +1216,18 @@
 
       document.getElementById('btnCloseSettings').addEventListener('click', () => {
         modal.classList.add('hidden');
+      });
+
+      // Simple Help Modal
+      const modalHelp = document.getElementById('modalHelp');
+      document.getElementById('btnHelp').addEventListener('click', () => {
+        modalHelp.classList.remove('hidden');
+      });
+      document.getElementById('btnCloseHelp').addEventListener('click', () => {
+        modalHelp.classList.add('hidden');
+      });
+      document.getElementById('btnGotItHelp').addEventListener('click', () => {
+        modalHelp.classList.add('hidden');
       });
 
       document.getElementById('btnSaveSettings').addEventListener('click', () => {
