@@ -1,38 +1,60 @@
-# Guide Utilisateur - Work Calculator
+# Guide Utilisateur - Work Calculator (Spécial Débutant)
 
-Bienvenue dans le guide d'utilisation de **Work Calculator**, votre application dédiée au suivi et au calcul des heures de prestation.
-
----
-
-## 1. Démarrage Rapide
-
-1. Ouvrez simplement le fichier `index.html` dans votre navigateur habituel (Chrome, Edge, Firefox, Safari) ou lancez l'application de bureau si elle est installée.
-2. Choisissez le **Mois** et l'**Année** en haut au centre de l'écran.
-3. Renseignez vos heures pour les jours travaillés.
+Bienvenue ! Cette application a été conçue pour être **d'une simplicité absolue** : aucune connaissance informatique requise, zéro prise de tête, et toutes vos heures sont enregistrées automatiquement.
 
 ---
 
-## 2. Double Mode de Saisie des Heures (Au Choix)
+## 1. Démarrer en 1 Clic (Sans Se Prendre la Tête)
 
-Chaque cellule d'heure (**Départ**, **Rentrée**, **Pause**, **H Récup**) offre désormais une double possibilité selon votre préférence :
+* **Sur Windows :** Double-cliquez simplement sur le fichier **`Lancer l'application.bat`**.
+  * L'application s'ouvre directement comme un vrai logiciel de bureau dans sa propre fenêtre, sans barres compliquées.
+* **Sur Mac ou Linux :** Double-cliquez sur `Lancer l'application.command` ou sur `index.html`.
 
-### Option A : Sélection dans la liste déroulante (sans taper)
-* Cliquez sur la **petite flèche `▼`** située à droite de la case (ou cliquez/double-cliquez directement dans la case).
-* Le menu déroulant s'ouvre avec les créneaux par pas de 15 minutes (identiques à l'Excel d'origine) :
-  * **Départ :** de `06:00` à `18:00`
-  * **Rentrée :** de `12:00` à `20:00`
-  * **Pause repas :** de `00:00` à `02:00`
-  * **H Récupérer :** de `00:30` à `08:00`
-* Cliquez sur l'heure désirée : le calcul s'actualise immédiatement !
+---
 
-### Option B : Saisie ultra-rapide au clavier
-Si vous préférez taper au clavier ou indiquer une heure précise (ex. `07:52`) :
-* Tapez `8` puis `Tab` $\rightarrow$ l'application écrit automatiquement **08:00**.
-* Tapez `815` puis `Tab` $\rightarrow$ l'application écrit automatiquement **08:15**.
-* Tapez `752` puis `Tab` $\rightarrow$ l'application écrit automatiquement **07:52**.
-* Tapez `1630` puis `Tab` $\rightarrow$ l'application écrit automatiquement **16:30**.
-* La touche **Tabulation** vous fait passer directement à la case suivante.
-* La touche **Entrée** valide la saisie de la cellule active.
+## 2. Comment Saisir ses Heures en 10 Secondes
+
+### A. Vous avez fait une journée normale (8h) ?
+👉 Cliquez simplement sur le bouton vert **`+ 8h`** au bout de la ligne :
+* L'heure de départ (`08:00`), l'heure de fin (`16:30`) et la pause repas (`00:30`) s'inscrivent d'un seul coup.
+* Vous vous êtes trompé ? Un bouton **`✕ Effacer`** apparaît pour remettre la ligne à zéro en un clic.
+
+### B. Vous voulez remplir tout le mois d'un coup ?
+👉 Cliquez sur le bouton en haut **`⚡ Remplir Lun-Ven (8h)`** :
+* Tous les jours ouvrés du mois (du lundi au vendredi) se remplissent automatiquement.
+* Les week-ends et jours fériés restent protégés.
+
+### C. Vous avez des horaires particuliers ?
+👉 Deux méthodes au choix :
+1. **À la souris :** Cliquez sur la flèche `▼` pour choisir votre heure dans la liste (ex: 07:45, 17:00).
+2. **Au clavier :** Tapez directement les chiffres (ex: tapez `815` $\rightarrow$ cela écrit automatiquement `08:15`).
+
+---
+
+## 3. Zéro Stress : La Sauvegarde est 100% Automatique
+
+* **Aucun bouton « Enregistrer » à chercher !**
+* Chaque fois que vous changez une heure ou choisissez un chantier, la pastille verte en haut affiche :
+  `✅ Enregistré à 16:05`
+* Vous pouvez fermer la fenêtre ou éteindre l'ordinateur à tout moment : **rien ne peut être perdu**.
+
+---
+
+## 4. Comprendre son Solde d'Heures Facilement
+
+En haut à droite, la grande carte récapitulative vous explique votre situation en français limpide :
+* 🟢 **Vert :** *« Vous avez +04:30:00 d'avance (à récupérer ou payé) »*
+* 🟠 **Orange :** *« Vous avez -01:15:00 de retard à rattraper »*
+* ⚪ **Gris :** *« Solde parfait : équilibré »*
+
+Le solde du mois d'avant est **automatiquement reporté** dès que vous changez de mois.
+
+---
+
+## 5. À la Fin du Mois : Donner sa Feuille au Patron
+
+* Cliquez sur **`🖨️ Imprimer / PDF`** : une feuille A4 propre et officielle s'affiche avec la grille du mois et les deux zones de signature (pour vous et votre responsable).
+* Cliquez sur **`📊 Pour Excel`** si la comptabilité préfère recevoir le fichier tableur habituel.
 
 ### Boutons d'Action Rapide
 * **⚡ (éclair à droite d'une ligne) :** Remplit en un clic la journée avec l'horaire standard (ex. `08:00 - 16:30` avec `00:30` de pause).
