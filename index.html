@@ -1,0 +1,1003 @@
+<!DOCTYPE html>
+<html lang="fr" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Calculateur d'heures de prestation</title>
+  <!-- Tailwind CSS CDN for instant styling -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              50: '#eff6ff',
+              500: '#3b82f6',
+              600: '#2563eb',
+              700: '#1d4ed8',
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    @media print {
+      body {
+        background: white !important;
+        color: black !important;
+        font-size: 10pt;
+      }
+      .no-print {
+        display: none !important;
+      }
+      .print-only {
+        display: block !important;
+      }
+      .table-container {
+        overflow: visible !important;
+        max-height: none !important;
+      }
+      table {
+        page-break-inside: auto;
+      }
+      tr {
+        page-break-inside: avoid;
+        page-break-after: auto;
+      }
+      input, select {
+        border: none !important;
+        background: transparent !important;
+        color: black !important;
+        font-weight: 500;
+        box-shadow: none !important;
+      }
+    }
+    .print-only {
+      display: none;
+    }
+  </style>
+</head>
+<body class="bg-slate-900 text-slate-100 min-h-screen flex flex-col font-sans antialiased transition-colors duration-200">
+
+  <!-- TOP HEADER -->
+  <header class="no-print bg-slate-800/90 border-b border-slate-700/80 sticky top-0 z-30 backdrop-blur">
+    <div class="max-w-7xl mx-auto px-4 py-3 flex flex-wrap items-center justify-between gap-4">
+      <div class="flex items-center space-x-3">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-blue-600 to-indigo-500 flex items-center justify-center shadow-lg shadow-blue-500/20">
+          <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+        </div>
+        <div>
+          <h1 class="text-lg font-bold text-white flex items-center gap-2">
+            Heures de Prestation
+            <span id="headerWorkerName" class="text-xs px-2.5 py-0.5 rounded-full bg-blue-500/20 text-blue-400 border border-blue-500/30 font-medium">Didier</span>
+          </h1>
+          <p class="text-xs text-slate-400">Calculateur conforme Windows, Mac & Linux</p>
+        </div>
+      </div>
+
+      <!-- MONTH & YEAR SELECTOR -->
+      <div class="flex items-center space-x-2 bg-slate-900/80 p-1.5 rounded-xl border border-slate-700">
+        <button id="btnPrevMonth" title="Mois précédent" class="p-2 hover:bg-slate-800 rounded-lg text-slate-400 hover:text-white transition">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+        </button>
+        <select id="selectMonth" class="bg-transparent text-sm font-semibold text-white px-2 py-1 outline-none cursor-pointer">
+          <option value="1" class="bg-slate-800">Janvier</option>
+          <option value="2" class="bg-slate-800">Février</option>
+          <option value="3" class="bg-slate-800">Mars</option>
+          <option value="4" class="bg-slate-800">Avril</option>
+          <option value="5" class="bg-slate-800">Mai</option>
+          <option value="6" class="bg-slate-800">Juin</option>
+          <option value="7" class="bg-slate-800">Juillet</option>
+          <option value="8" class="bg-slate-800">Août</option>
+          <option value="9" class="bg-slate-800">Septembre</option>
+          <option value="10" class="bg-slate-800">Octobre</option>
+          <option value="11" class="bg-slate-800">Novembre</option>
+          <option value="12" class="bg-slate-800">Décembre</option>
+        </select>
+        <input id="inputYear" type="number" min="2020" max="2050" class="w-20 bg-transparent text-sm font-semibold text-white text-center border-l border-slate-700 px-1 py-1 outline-none" value="2026" />
+        <button id="btnNextMonth" title="Mois suivant" class="p-2 hover:bg-slate-800 rounded-lg text-slate-400 hover:text-white transition">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+        </button>
+      </div>
+
+      <!-- ACTION BUTTONS -->
+      <div class="flex items-center space-x-2">
+        <button id="btnQuickStandard" title="Remplir la semaine type sélectionnée" class="px-3 py-1.5 rounded-lg bg-slate-700/60 hover:bg-slate-700 text-xs font-medium text-slate-200 transition border border-slate-600/50 flex items-center gap-1.5">
+          <svg class="w-3.5 h-3.5 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+          Semaine type
+        </button>
+        <button id="btnExportCsv" title="Exporter au format Excel / CSV" class="px-3 py-1.5 rounded-lg bg-slate-700/60 hover:bg-slate-700 text-xs font-medium text-slate-200 transition border border-slate-600/50 flex items-center gap-1.5">
+          <svg class="w-3.5 h-3.5 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+          Export Excel/CSV
+        </button>
+        <button id="btnPrintPdf" title="Imprimer ou enregistrer en PDF" class="px-3 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-500 text-xs font-medium text-white transition shadow-sm shadow-blue-500/20 flex items-center gap-1.5">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/></svg>
+          Imprimer / PDF
+        </button>
+        <button id="btnSettings" title="Paramètres" class="p-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white transition border border-slate-700">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- PRINT ONLY HEADER -->
+  <div class="print-only p-4 mb-2 border-b border-gray-300">
+    <div class="flex justify-between items-center">
+      <div>
+        <h1 class="text-xl font-bold text-gray-900">Relevé des Heures de Prestation</h1>
+        <p class="text-sm text-gray-600">Collaborateur : <strong id="printWorkerName">Didier</strong></p>
+      </div>
+      <div class="text-right">
+        <p class="text-lg font-bold text-gray-900" id="printMonthYear">Janvier 2026</p>
+        <p class="text-xs text-gray-500">Base journalière : <span id="printBaseHours">8h00</span></p>
+      </div>
+    </div>
+  </div>
+
+  <!-- MAIN CONTENT CONTAINER -->
+  <main class="flex-1 max-w-7xl w-full mx-auto p-4 flex flex-col gap-4">
+
+    <!-- KPI SUMMARY CARDS -->
+    <div class="grid grid-cols-2 md:grid-cols-6 gap-3 no-print">
+      <div class="bg-slate-800/70 border border-slate-700/60 rounded-xl p-3">
+        <p class="text-xs text-slate-400 font-medium">Heures Travaillées</p>
+        <p id="kpiWorked" class="text-lg font-bold text-white mt-1">00:00:00</p>
+        <p id="kpiWorkedDays" class="text-[11px] text-slate-500">0 jour(s)</p>
+      </div>
+      <div class="bg-slate-800/70 border border-emerald-500/20 rounded-xl p-3">
+        <p class="text-xs text-emerald-400 font-medium">Heures Sup (+)</p>
+        <p id="kpiSup" class="text-lg font-bold text-emerald-400 mt-1">00:00:00</p>
+        <p class="text-[11px] text-slate-500">> base journalière</p>
+      </div>
+      <div class="bg-slate-800/70 border border-amber-500/20 rounded-xl p-3">
+        <p class="text-xs text-amber-400 font-medium">Heures Négatives (-)</p>
+        <p id="kpiNegatif" class="text-lg font-bold text-amber-400 mt-1">00:00:00</p>
+        <p class="text-[11px] text-slate-500">< base journalière</p>
+      </div>
+      <div class="bg-slate-800/70 border border-blue-500/20 rounded-xl p-3">
+        <p class="text-xs text-blue-400 font-medium">Récupérations prises</p>
+        <p id="kpiRecup" class="text-lg font-bold text-blue-400 mt-1">00:00:00</p>
+        <p class="text-[11px] text-slate-500">déduites du solde</p>
+      </div>
+      <div class="bg-slate-800/70 border border-slate-700/60 rounded-xl p-3">
+        <p class="text-xs text-slate-400 font-medium">Solde Mois Précédent</p>
+        <div class="flex items-center gap-1 mt-1">
+          <input id="inputSoldePrecedent" type="text" class="w-full bg-slate-900 border border-slate-700 rounded px-2 py-0.5 text-sm font-semibold text-white focus:border-blue-500 outline-none" value="00:00:00" />
+        </div>
+        <p class="text-[11px] text-slate-500">reporté auto ou modifiable</p>
+      </div>
+      <div class="bg-gradient-to-br from-blue-900/40 to-indigo-900/40 border border-blue-500/40 rounded-xl p-3 shadow-md shadow-blue-500/5">
+        <p class="text-xs text-blue-300 font-semibold uppercase tracking-wider">Solde Cumulé Total</p>
+        <p id="kpiCumule" class="text-xl font-black text-white mt-1">00:00:00</p>
+        <p id="kpiStatus" class="text-[11px] text-blue-300/80 font-medium">À jour</p>
+      </div>
+    </div>
+
+    <!-- TABLE WORK SHEET -->
+    <div class="bg-slate-800/90 border border-slate-700/80 rounded-2xl overflow-hidden shadow-xl table-container">
+      <div class="overflow-x-auto">
+        <table class="w-full text-left border-collapse text-xs">
+          <thead>
+            <tr class="bg-slate-900/90 text-slate-300 font-semibold border-b border-slate-700">
+              <th class="p-3 w-32">Date</th>
+              <th class="p-3 w-24">Départ</th>
+              <th class="p-3 w-24">Rentrée</th>
+              <th class="p-3 w-24">Pause</th>
+              <th class="p-3 w-24 text-blue-400 font-bold">Total H</th>
+              <th class="p-3 w-24 text-slate-300">H Récup.</th>
+              <th class="p-3 w-24 text-emerald-400 font-semibold">H Sup</th>
+              <th class="p-3 w-24 text-amber-400 font-semibold">H Négatif</th>
+              <th class="p-3 min-w-[160px]">Chantier / Type</th>
+              <th class="p-3 w-16 no-print text-center">Action</th>
+            </tr>
+          </thead>
+          <tbody id="tableBody" class="divide-y divide-slate-700/50">
+            <!-- Rows injected by JavaScript -->
+          </tbody>
+          <tfoot class="bg-slate-900/95 border-t-2 border-slate-600 font-bold text-slate-200">
+            <tr>
+              <td class="p-3 text-slate-400">TOTAUX DU MOIS</td>
+              <td colspan="3" class="p-3 text-right text-slate-400">Total presté :</td>
+              <td id="footTotal" class="p-3 text-blue-400 font-bold">00:00:00</td>
+              <td id="footRecup" class="p-3 text-blue-300">00:00:00</td>
+              <td id="footSup" class="p-3 text-emerald-400">00:00:00</td>
+              <td id="footNegatif" class="p-3 text-amber-400">00:00:00</td>
+              <td colspan="2" class="p-3 text-slate-400 text-xs font-normal">
+                Solde net du mois : <span id="footSoldeNet" class="font-bold text-white">00:00:00</span>
+              </td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+    </div>
+
+    <!-- PRINT SIGNATURE SECTION -->
+    <div class="print-only mt-8 pt-4 border-t border-gray-300">
+      <div class="grid grid-cols-2 gap-8 text-sm">
+        <div class="border border-gray-300 rounded p-4 h-32">
+          <p class="font-bold text-gray-800">Signature du collaborateur :</p>
+          <p class="text-xs text-gray-500 mt-1">Date et mention "Lu et approuvé"</p>
+        </div>
+        <div class="border border-gray-300 rounded p-4 h-32">
+          <p class="font-bold text-gray-800">Validation Responsable / Direction :</p>
+          <p class="text-xs text-gray-500 mt-1">Date et signature</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- INSTRUCTIONS / TIPS -->
+    <div class="no-print bg-slate-800/40 border border-slate-700/40 rounded-xl p-3.5 text-xs text-slate-400 flex items-center justify-between">
+      <div class="flex items-center gap-2">
+        <span class="inline-block w-2.5 h-2.5 rounded-full bg-blue-500"></span>
+        <span><strong>Astuce de saisie rapide :</strong> Tapez simplement les chiffres (ex. <code class="bg-slate-900 px-1 py-0.5 rounded text-slate-200">8</code> pour 08:00, <code class="bg-slate-900 px-1 py-0.5 rounded text-slate-200">815</code> pour 08:15, <code class="bg-slate-900 px-1 py-0.5 rounded text-slate-200">1630</code> pour 16:30). Utilisez <code class="bg-slate-900 px-1 py-0.5 rounded text-slate-200">Tab</code> pour passer à la case suivante.</span>
+      </div>
+      <div class="text-slate-500">Sauvegarde automatique active ✓</div>
+    </div>
+  </main>
+
+  <!-- SETTINGS MODAL -->
+  <div id="modalSettings" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+    <div class="bg-slate-800 border border-slate-700 rounded-2xl max-w-lg w-full p-6 shadow-2xl flex flex-col gap-4 max-h-[90vh] overflow-y-auto">
+      <div class="flex items-center justify-between border-b border-slate-700 pb-3">
+        <h2 class="text-lg font-bold text-white flex items-center gap-2">
+          <svg class="w-5 h-5 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+          Paramètres de l'application
+        </h2>
+        <button id="btnCloseSettings" class="text-slate-400 hover:text-white p-1 rounded-lg">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+      </div>
+
+      <div class="space-y-4 text-xs">
+        <div>
+          <label class="block text-slate-300 font-semibold mb-1">Nom du collaborateur</label>
+          <input id="setUserName" type="text" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-white outline-none focus:border-blue-500" value="Didier" />
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-slate-300 font-semibold mb-1">Base journalière normale</label>
+            <div class="flex items-center gap-2">
+              <input id="setDailyHours" type="number" step="0.25" min="4" max="12" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-white outline-none focus:border-blue-500" value="8" />
+              <span class="text-slate-400 text-sm">heures/j</span>
+            </div>
+          </div>
+          <div>
+            <label class="block text-slate-300 font-semibold mb-1">Pays des jours fériés</label>
+            <select id="setCountry" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-white outline-none focus:border-blue-500">
+              <option value="BE">Belgique (BE)</option>
+              <option value="FR">France (FR)</option>
+              <option value="LU">Luxembourg (LU)</option>
+              <option value="CUSTOM">Personnalisé / Aucun</option>
+            </select>
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-slate-300 font-semibold mb-1">Types d'absences & récupérations (séparés par une virgule)</label>
+          <textarea id="setAbsences" rows="2" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-white outline-none focus:border-blue-500">Congé, Congé payé, Récupération, Férié, Maladie, Formation</textarea>
+        </div>
+
+        <div>
+          <label class="block text-slate-300 font-semibold mb-1">Liste des Chantiers habituels (séparés par une virgule)</label>
+          <textarea id="setChantiers" rows="2" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-white outline-none focus:border-blue-500">Chantier Principal, Chantier Secondaire, Atelier / Dépôt, Entretien</textarea>
+        </div>
+
+        <div class="pt-3 border-t border-slate-700 flex justify-between items-center">
+          <button id="btnBackupDownload" class="px-3 py-1.5 bg-slate-700 hover:bg-slate-600 rounded-lg text-slate-200 transition font-medium">
+            Sauvegarder tout (.json)
+          </button>
+          <label class="px-3 py-1.5 bg-slate-700 hover:bg-slate-600 rounded-lg text-slate-200 transition font-medium cursor-pointer">
+            Restaurer (.json)
+            <input type="file" id="fileRestore" class="hidden" accept=".json" />
+          </label>
+        </div>
+      </div>
+
+      <div class="border-t border-slate-700 pt-3 flex justify-end gap-2">
+        <button id="btnSaveSettings" class="px-5 py-2 bg-blue-600 hover:bg-blue-500 rounded-lg text-white font-semibold transition shadow-md shadow-blue-500/20">
+          Enregistrer les modifications
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- SCRIPT LOGIC (INLINE FOR ZERO-DEPENDENCY INSTANT RUN) -->
+  <script>
+    // --- STATE & UTILS ---
+    const MONTH_NAMES = [
+      'Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin',
+      'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'
+    ];
+    const DAY_NAMES = ['Dim', 'Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam'];
+
+    const SETTINGS_KEY = 'work_calc_settings_v1';
+    const SHEETS_PREFIX = 'work_calc_sheet_';
+
+    let settings = {
+      userName: 'Didier',
+      standardDailyHours: 8.0,
+      country: 'BE',
+      customHolidays: [],
+      chantierList: ['Chantier Principal', 'Chantier Secondaire', 'Atelier / Dépôt', 'Entretien'],
+      absenceTypes: ['Congé', 'Congé payé', 'Récupération', 'Férié', 'Maladie', 'Formation'],
+      theme: 'dark'
+    };
+
+    let currentYear = 2026;
+    let currentMonth = 1;
+    let currentSheet = null;
+
+    // --- TIME MATH ---
+    function parseTimeToMinutes(str) {
+      if (!str || typeof str !== 'string') return 0;
+      const trimmed = str.trim();
+      if (!trimmed) return 0;
+      const isNegative = trimmed.startsWith('-');
+      const cleaned = trimmed.replace(/^[+-]/, '');
+      const parts = cleaned.split(':');
+      const h = parseInt(parts[0], 10) || 0;
+      const m = parts.length > 1 ? parseInt(parts[1], 10) || 0 : 0;
+      const s = parts.length > 2 ? parseInt(parts[2], 10) || 0 : 0;
+      const total = h * 60 + m + Math.round(s / 60);
+      return isNegative ? -total : total;
+    }
+
+    function minutesToTimeString(minutes, withSeconds = true, withSign = false) {
+      if (isNaN(minutes)) return withSeconds ? '00:00:00' : '00:00';
+      const isNegative = minutes < 0;
+      const absMin = Math.abs(Math.round(minutes));
+      const h = Math.floor(absMin / 60);
+      const m = absMin % 60;
+      const s = 0;
+      const pad = (n) => n.toString().padStart(2, '0');
+      const base = withSeconds ? `${pad(h)}:${pad(m)}:${pad(s)}` : `${pad(h)}:${pad(m)}`;
+      if (withSign) {
+        if (minutes === 0) return base;
+        return (isNegative ? '-' : '+') + base;
+      }
+      return isNegative ? `-${base}` : base;
+    }
+
+    function normalizeTimeInput(input) {
+      if (!input) return '';
+      const clean = input.trim().replace(/[^\d:]/g, '');
+      if (!clean) return '';
+      if (clean.includes(':')) {
+        const parts = clean.split(':');
+        const h = Math.min(23, Math.max(0, parseInt(parts[0], 10) || 0));
+        let m = parseInt(parts[1] || '0', 10) || 0;
+        if (parts[1] && parts[1].length === 1) m = m * 10;
+        m = Math.min(59, Math.max(0, m));
+        return `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}`;
+      }
+      if (clean.length === 1 || clean.length === 2) {
+        const h = Math.min(23, Math.max(0, parseInt(clean, 10)));
+        return `${h.toString().padStart(2, '0')}:00`;
+      }
+      if (clean.length === 3) {
+        const h = parseInt(clean.slice(0, 1), 10);
+        const m = Math.min(59, parseInt(clean.slice(1), 10));
+        return `0${h}:${m.toString().padStart(2, '0')}`;
+      }
+      if (clean.length >= 4) {
+        const h = Math.min(23, parseInt(clean.slice(0, 2), 10));
+        const m = Math.min(59, parseInt(clean.slice(2, 4), 10));
+        return `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}`;
+      }
+      return clean;
+    }
+
+    // --- BELGIAN / GAUSS EASTER HOLIDAYS ---
+    function getEasterSunday(year) {
+      const a = year % 19;
+      const b = Math.floor(year / 100);
+      const c = year % 100;
+      const d = Math.floor(b / 4);
+      const e = b % 4;
+      const f = Math.floor((b + 8) / 25);
+      const g = Math.floor((b - f + 1) / 3);
+      const h = (19 * a + b - d - g + 15) % 30;
+      const i = Math.floor(c / 4);
+      const k = c % 4;
+      const l = (32 + 2 * e + 2 * i - h - k) % 7;
+      const m = Math.floor((a + 11 * h + 22 * l) / 451);
+      const month = Math.floor((h + l - 7 * m + 114) / 31);
+      const day = ((h + l - 7 * m + 114) % 31) + 1;
+      return new Date(Date.UTC(year, month - 1, day));
+    }
+
+    function addDays(d, days) {
+      const res = new Date(d.getTime());
+      res.setUTCDate(res.getUTCDate() + days);
+      return res;
+    }
+
+    function formatDate(d) {
+      const y = d.getUTCFullYear();
+      const m = (d.getUTCMonth() + 1).toString().padStart(2, '0');
+      const day = d.getUTCDate().toString().padStart(2, '0');
+      return `${y}-${m}-${day}`;
+    }
+
+    function getHolidays(year, country) {
+      const map = new Map();
+      const easter = getEasterSunday(year);
+      const easterMon = addDays(easter, 1);
+      const ascension = addDays(easter, 39);
+      const whitMon = addDays(easter, 50);
+
+      if (country === 'BE') {
+        map.set(`${year}-01-01`, 'Nouvel An');
+        map.set(formatDate(easterMon), 'Lundi de Pâques');
+        map.set(`${year}-05-01`, 'Fête du Travail');
+        map.set(formatDate(ascension), 'Ascension');
+        map.set(formatDate(whitMon), 'Lundi de Pentecôte');
+        map.set(`${year}-07-21`, 'Fête nationale belge');
+        map.set(`${year}-08-15`, 'Assomption');
+        map.set(`${year}-11-01`, 'Toussaint');
+        map.set(`${year}-11-11`, 'Armistice 1918');
+        map.set(`${year}-12-25`, 'Noël');
+      } else if (country === 'FR') {
+        map.set(`${year}-01-01`, 'Jour de l’An');
+        map.set(formatDate(easterMon), 'Lundi de Pâques');
+        map.set(`${year}-05-01`, 'Fête du Travail');
+        map.set(`${year}-05-08`, 'Victoire 1945');
+        map.set(formatDate(ascension), 'Ascension');
+        map.set(formatDate(whitMon), 'Lundi de Pentecôte');
+        map.set(`${year}-07-14`, 'Fête Nationale');
+        map.set(`${year}-08-15`, 'Assomption');
+        map.set(`${year}-11-01`, 'Toussaint');
+        map.set(`${year}-11-11`, 'Armistice 1918');
+        map.set(`${year}-12-25`, 'Noël');
+      }
+      return map;
+    }
+
+    // --- RECALCULATE LOGIC ---
+    function recalculateDay(day) {
+      const baseMinutes = Math.round(settings.standardDailyHours * 60);
+      const dep = parseTimeToMinutes(day.depart);
+      const rent = parseTimeToMinutes(day.rentree);
+      const pause = parseTimeToMinutes(day.pause);
+      const recup = Math.max(0, parseTimeToMinutes(day.hRecup));
+
+      let total = 0;
+      if (rent > dep) {
+        total = Math.max(0, (rent - dep) - pause);
+      }
+
+      let sup = 0;
+      let neg = 0;
+      if (total > 0) {
+        if (total > baseMinutes) {
+          sup = total - baseMinutes;
+          neg = 0;
+        } else if (total < baseMinutes) {
+          sup = 0;
+          neg = baseMinutes - total;
+        }
+      }
+
+      day.totalMinutes = total;
+      day.totalFormatted = minutesToTimeString(total, true, false);
+      day.hSupMinutes = sup;
+      day.hSupFormatted = minutesToTimeString(sup, true, false);
+      day.hNegatifMinutes = neg;
+      day.hNegatifFormatted = minutesToTimeString(neg, true, false);
+      day.hRecupMinutes = recup;
+      return day;
+    }
+
+    function recalculateSheet() {
+      let totalWorked = 0;
+      let totalSup = 0;
+      let totalNeg = 0;
+      let totalRecup = 0;
+      let workedCount = 0;
+
+      currentSheet.days.forEach(day => {
+        recalculateDay(day);
+        totalWorked += day.totalMinutes;
+        totalSup += day.hSupMinutes;
+        totalNeg += day.hNegatifMinutes;
+        totalRecup += day.hRecupMinutes;
+        if (day.totalMinutes > 0) workedCount++;
+      });
+
+      const soldePrec = parseTimeToMinutes(currentSheet.soldeMoisPrecedent);
+      const soldeNet = totalSup - totalNeg - totalRecup;
+      const soldeCumule = soldePrec + soldeNet;
+
+      currentSheet.summary = {
+        totalWorkedMinutes: totalWorked,
+        totalWorkedFormatted: minutesToTimeString(totalWorked, true, false),
+        totalSupMinutes: totalSup,
+        totalSupFormatted: minutesToTimeString(totalSup, true, false),
+        totalNegatifMinutes: totalNeg,
+        totalNegatifFormatted: minutesToTimeString(totalNeg, true, false),
+        totalRecupMinutes: totalRecup,
+        totalRecupFormatted: minutesToTimeString(totalRecup, true, false),
+        soldeMoisPrecedentMinutes: soldePrec,
+        soldeMoisPrecedentFormatted: minutesToTimeString(soldePrec, true, true),
+        soldeNetMoisMinutes: soldeNet,
+        soldeNetMoisFormatted: minutesToTimeString(soldeNet, true, true),
+        soldeCumuleMinutes: soldeCumule,
+        soldeCumuleFormatted: minutesToTimeString(soldeCumule, true, true),
+        workedDaysCount: workedCount
+      };
+
+      saveCurrentSheet();
+      updateKpisAndFooter();
+    }
+
+    // --- STORAGE ---
+    function loadSettings() {
+      try {
+        const raw = localStorage.getItem(SETTINGS_KEY);
+        if (raw) settings = { ...settings, ...JSON.parse(raw) };
+      } catch (e) { console.error(e); }
+    }
+
+    function saveSettings() {
+      localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings));
+    }
+
+    function getPreviousMonthId(y, m) {
+      let py = y;
+      let pm = m - 1;
+      if (pm < 1) { pm = 12; py = y - 1; }
+      return `${py}-${pm.toString().padStart(2, '0')}`;
+    }
+
+    function loadSheet(year, month) {
+      const id = `${year}-${month.toString().padStart(2, '0')}`;
+      const raw = localStorage.getItem(`${SHEETS_PREFIX}${id}`);
+      if (raw) {
+        try {
+          currentSheet = JSON.parse(raw);
+          recalculateSheet();
+          return;
+        } catch (e) { console.error(e); }
+      }
+
+      // If new, get previous month balance
+      let soldePrec = '00:00:00';
+      const prevId = getPreviousMonthId(year, month);
+      const prevRaw = localStorage.getItem(`${SHEETS_PREFIX}${prevId}`);
+      if (prevRaw) {
+        try {
+          const prevSheet = JSON.parse(prevRaw);
+          if (prevSheet.summary && prevSheet.summary.soldeCumuleFormatted) {
+            soldePrec = prevSheet.summary.soldeCumuleFormatted;
+          }
+        } catch {}
+      }
+
+      // Generate new month
+      const holidays = getHolidays(year, settings.country);
+      const daysCount = new Date(year, month, 0).getDate();
+      const days = [];
+
+      for (let d = 1; d <= daysCount; d++) {
+        const dayStr = d.toString().padStart(2, '0');
+        const monthStr = month.toString().padStart(2, '0');
+        const iso = `${year}-${monthStr}-${dayStr}`;
+        const dateObj = new Date(year, month - 1, d);
+        const dow = dateObj.getDay();
+        const isWe = dow === 0 || dow === 6;
+        const hol = holidays.get(iso);
+
+        days.push({
+          date: iso,
+          dayOfWeek: dow,
+          isWeekend: isWe,
+          isHoliday: !!hol,
+          holidayName: hol || '',
+          depart: '',
+          rentree: '',
+          pause: '',
+          hRecup: '',
+          chantier: hol ? 'Férié' : '',
+          totalMinutes: 0,
+          totalFormatted: '00:00:00',
+          hSupMinutes: 0,
+          hSupFormatted: '00:00:00',
+          hNegatifMinutes: 0,
+          hNegatifFormatted: '00:00:00',
+          hRecupMinutes: 0
+        });
+      }
+
+      currentSheet = {
+        id,
+        year,
+        month,
+        soldeMoisPrecedent: soldePrec,
+        days: days,
+        summary: {}
+      };
+      recalculateSheet();
+    }
+
+    function saveCurrentSheet() {
+      if (!currentSheet) return;
+      localStorage.setItem(`${SHEETS_PREFIX}${currentSheet.id}`, JSON.stringify(currentSheet));
+    }
+
+    // --- UI RENDERING ---
+    function renderTable() {
+      const tbody = document.getElementById('tableBody');
+      tbody.innerHTML = '';
+
+      const optionsChantiers = [
+        '<option value="">-- Choisir --</option>',
+        '<optgroup label="Types d\'absence">',
+        ...settings.absenceTypes.map(a => `<option value="${a}">${a}</option>`),
+        '</optgroup>',
+        '<optgroup label="Chantiers">',
+        ...settings.chantierList.map(c => `<option value="${c}">${c}</option>`),
+        '</optgroup>'
+      ].join('');
+
+      currentSheet.days.forEach((day, index) => {
+        const tr = document.createElement('tr');
+        
+        let rowBg = 'hover:bg-slate-700/30 transition';
+        if (day.isWeekend) {
+          rowBg = 'bg-slate-900/60 text-slate-400';
+        } else if (day.isHoliday) {
+          rowBg = 'bg-indigo-950/40 text-indigo-300';
+        }
+
+        tr.className = `${rowBg}`;
+
+        // Format Date e.g. "Jeu 01/01"
+        const [y, m, d] = day.date.split('-');
+        const dowName = DAY_NAMES[day.dayOfWeek];
+        const dateDisplay = `${dowName} ${d}/${m}`;
+
+        let badge = '';
+        if (day.isHoliday) {
+          badge = `<span class="block text-[10px] text-indigo-400 font-medium truncate max-w-[110px]" title="${day.holidayName}">🎉 ${day.holidayName}</span>`;
+        } else if (day.isWeekend) {
+          badge = `<span class="block text-[10px] text-slate-500 font-medium">Week-end</span>`;
+        }
+
+        tr.innerHTML = `
+          <td class="p-2.5 font-medium whitespace-nowrap">
+            <span class="text-slate-200">${dateDisplay}</span>
+            ${badge}
+          </td>
+          <td class="p-1.5">
+            <input type="text" data-index="${index}" data-field="depart" class="time-input w-full bg-slate-900/80 border border-slate-700/80 rounded px-2 py-1 text-slate-100 outline-none focus:border-blue-500 text-center font-mono" placeholder="00:00" value="${day.depart}" />
+          </td>
+          <td class="p-1.5">
+            <input type="text" data-index="${index}" data-field="rentree" class="time-input w-full bg-slate-900/80 border border-slate-700/80 rounded px-2 py-1 text-slate-100 outline-none focus:border-blue-500 text-center font-mono" placeholder="00:00" value="${day.rentree}" />
+          </td>
+          <td class="p-1.5">
+            <input type="text" data-index="${index}" data-field="pause" class="time-input w-full bg-slate-900/80 border border-slate-700/80 rounded px-2 py-1 text-slate-100 outline-none focus:border-blue-500 text-center font-mono" placeholder="00:00" value="${day.pause}" />
+          </td>
+          <td class="p-2.5 font-bold text-blue-400 font-mono text-center" id="cell-total-${index}">
+            ${day.totalFormatted}
+          </td>
+          <td class="p-1.5">
+            <input type="text" data-index="${index}" data-field="hRecup" class="time-input w-full bg-slate-900/80 border border-slate-700/80 rounded px-2 py-1 text-slate-100 outline-none focus:border-blue-500 text-center font-mono text-blue-300" placeholder="00:00" value="${day.hRecup}" />
+          </td>
+          <td class="p-2.5 font-semibold text-emerald-400 font-mono text-center" id="cell-sup-${index}">
+            ${day.hSupFormatted}
+          </td>
+          <td class="p-2.5 font-semibold text-amber-400 font-mono text-center" id="cell-neg-${index}">
+            ${day.hNegatifFormatted}
+          </td>
+          <td class="p-1.5">
+            <select data-index="${index}" data-field="chantier" class="w-full bg-slate-900/80 border border-slate-700/80 rounded px-2 py-1 text-slate-200 outline-none focus:border-blue-500">
+              ${optionsChantiers}
+            </select>
+          </td>
+          <td class="p-1.5 text-center no-print">
+            <button data-index="${index}" class="btn-fill-day p-1 hover:bg-slate-700 rounded text-slate-400 hover:text-white" title="Remplir 8h standard (08:00 - 16:30 avec 30m pause)">
+              ⚡
+            </button>
+          </td>
+        `;
+
+        // Set selected value in select element
+        const select = tr.querySelector('select');
+        if (select && day.chantier) {
+          select.value = day.chantier;
+        }
+
+        tbody.appendChild(tr);
+      });
+
+      attachTableListeners();
+    }
+
+    function updateKpisAndFooter() {
+      const sum = currentSheet.summary;
+      document.getElementById('kpiWorked').textContent = sum.totalWorkedFormatted;
+      document.getElementById('kpiWorkedDays').textContent = `${sum.workedDaysCount} jour(s) presté(s)`;
+      document.getElementById('kpiSup').textContent = sum.totalSupFormatted;
+      document.getElementById('kpiNegatif').textContent = sum.totalNegatifFormatted;
+      document.getElementById('kpiRecup').textContent = sum.totalRecupFormatted;
+      document.getElementById('inputSoldePrecedent').value = currentSheet.soldeMoisPrecedent;
+      document.getElementById('kpiCumule').textContent = sum.soldeCumuleFormatted;
+
+      const cumuleMin = sum.soldeCumuleMinutes;
+      const kpiCumuleEl = document.getElementById('kpiCumule');
+      if (cumuleMin > 0) {
+        kpiCumuleEl.className = 'text-xl font-black text-emerald-400 mt-1';
+        document.getElementById('kpiStatus').textContent = 'Crédit d\'heures (+)';
+      } else if (cumuleMin < 0) {
+        kpiCumuleEl.className = 'text-xl font-black text-amber-400 mt-1';
+        document.getElementById('kpiStatus').textContent = 'Débit d\'heures (-)';
+      } else {
+        kpiCumuleEl.className = 'text-xl font-black text-white mt-1';
+        document.getElementById('kpiStatus').textContent = 'Solde équilibré (0)';
+      }
+
+      document.getElementById('footTotal').textContent = sum.totalWorkedFormatted;
+      document.getElementById('footRecup').textContent = sum.totalRecupFormatted;
+      document.getElementById('footSup').textContent = sum.totalSupFormatted;
+      document.getElementById('footNegatif').textContent = sum.totalNegatifFormatted;
+      document.getElementById('footSoldeNet').textContent = sum.soldeNetMoisFormatted;
+
+      // Print headers
+      document.getElementById('printWorkerName').textContent = settings.userName;
+      document.getElementById('printMonthYear').textContent = `${MONTH_NAMES[currentMonth - 1]} ${currentYear}`;
+      document.getElementById('printBaseHours').textContent = `${settings.standardDailyHours}h00`;
+    }
+
+    function attachTableListeners() {
+      // Time inputs auto-normalization & update
+      document.querySelectorAll('.time-input').forEach(input => {
+        input.addEventListener('blur', (e) => {
+          const idx = parseInt(e.target.dataset.index, 10);
+          const field = e.target.dataset.field;
+          const normalized = normalizeTimeInput(e.target.value);
+          e.target.value = normalized;
+          currentSheet.days[idx][field] = normalized;
+          
+          recalculateDay(currentSheet.days[idx]);
+          document.getElementById(`cell-total-${idx}`).textContent = currentSheet.days[idx].totalFormatted;
+          document.getElementById(`cell-sup-${idx}`).textContent = currentSheet.days[idx].hSupFormatted;
+          document.getElementById(`cell-neg-${idx}`).textContent = currentSheet.days[idx].hNegatifFormatted;
+
+          recalculateSheet();
+        });
+
+        input.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter') {
+            e.target.blur();
+          }
+        });
+      });
+
+      // Select chantier listener
+      document.querySelectorAll('select[data-field="chantier"]').forEach(select => {
+        select.addEventListener('change', (e) => {
+          const idx = parseInt(e.target.dataset.index, 10);
+          currentSheet.days[idx].chantier = e.target.value;
+          saveCurrentSheet();
+        });
+      });
+
+      // Fast fill standard day button
+      document.querySelectorAll('.btn-fill-day').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          const idx = parseInt(e.target.dataset.index, 10);
+          const day = currentSheet.days[idx];
+          day.depart = '08:00';
+          day.rentree = '16:30';
+          day.pause = '00:30';
+          day.chantier = day.chantier || 'Chantier Principal';
+
+          recalculateSheet();
+          renderTable();
+        });
+      });
+    }
+
+    // --- CSV EXPORT ---
+    function exportCsv() {
+      const lines = [];
+      const monthName = MONTH_NAMES[currentMonth - 1].toLowerCase();
+      lines.push(`Heure de Prestation de ${settings.userName},,,,,,,${monthName},,,${currentYear},,`);
+      lines.push('Dates,Depart H,,Rentrée H,,Pause Repas,,Total H,H Recupérer,H Sup,H negatif,Chantier,');
+
+      currentSheet.days.forEach(day => {
+        lines.push([
+          day.date,
+          day.depart || '',
+          '',
+          day.rentree || '',
+          '',
+          day.pause || '',
+          '',
+          day.totalFormatted,
+          day.hRecup || '',
+          day.hSupFormatted,
+          day.hNegatifFormatted,
+          day.chantier || (day.isHoliday ? 'Férié' : ''),
+          ''
+        ].join(','));
+      });
+
+      lines.push(`,,,,,,,,,Solde du mois précédent,,,${currentSheet.summary.soldeMoisPrecedentFormatted}`);
+      lines.push(`,,,,,,,,,Total Heure Sup:,,${currentSheet.summary.soldeCumuleFormatted},`);
+
+      const csvContent = '\uFEFF' + lines.join('\r\n');
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `Prestations_${settings.userName}_${currentYear}_${currentMonth.toString().padStart(2, '0')}.csv`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }
+
+    // --- INITIALIZATION ---
+    function init() {
+      loadSettings();
+      document.getElementById('headerWorkerName').textContent = settings.userName;
+
+      const dateNow = new Date();
+      currentYear = 2026; // match Didier's context or current year
+      currentMonth = 1;
+
+      document.getElementById('selectMonth').value = currentMonth;
+      document.getElementById('inputYear').value = currentYear;
+
+      loadSheet(currentYear, currentMonth);
+      renderTable();
+
+      // Month/Year change listeners
+      document.getElementById('selectMonth').addEventListener('change', (e) => {
+        currentMonth = parseInt(e.target.value, 10);
+        loadSheet(currentYear, currentMonth);
+        renderTable();
+      });
+
+      document.getElementById('inputYear').addEventListener('change', (e) => {
+        currentYear = parseInt(e.target.value, 10) || 2026;
+        loadSheet(currentYear, currentMonth);
+        renderTable();
+      });
+
+      document.getElementById('btnPrevMonth').addEventListener('click', () => {
+        currentMonth--;
+        if (currentMonth < 1) { currentMonth = 12; currentYear--; }
+        document.getElementById('selectMonth').value = currentMonth;
+        document.getElementById('inputYear').value = currentYear;
+        loadSheet(currentYear, currentMonth);
+        renderTable();
+      });
+
+      document.getElementById('btnNextMonth').addEventListener('click', () => {
+        currentMonth++;
+        if (currentMonth > 12) { currentMonth = 1; currentYear++; }
+        document.getElementById('selectMonth').value = currentMonth;
+        document.getElementById('inputYear').value = currentYear;
+        loadSheet(currentYear, currentMonth);
+        renderTable();
+      });
+
+      // Quick week fill (fill all working days Monday-Friday with 8h00)
+      document.getElementById('btnQuickStandard').addEventListener('click', () => {
+        if (!confirm('Remplir les jours ouvrés (Lun-Ven) non renseignés avec les horaires standards (08:00 - 16:30, 30m pause) ?')) return;
+        currentSheet.days.forEach(day => {
+          if (!day.isWeekend && !day.isHoliday && !day.depart && !day.rentree) {
+            day.depart = '08:00';
+            day.rentree = '16:30';
+            day.pause = '00:30';
+            day.chantier = day.chantier || 'Chantier Principal';
+          }
+        });
+        recalculateSheet();
+        renderTable();
+      });
+
+      // Solde précédent change listener
+      document.getElementById('inputSoldePrecedent').addEventListener('change', (e) => {
+        currentSheet.soldeMoisPrecedent = e.target.value.trim();
+        recalculateSheet();
+      });
+
+      // Export CSV
+      document.getElementById('btnExportCsv').addEventListener('click', exportCsv);
+
+      // Print PDF
+      document.getElementById('btnPrintPdf').addEventListener('click', () => {
+        window.print();
+      });
+
+      // Settings Modal
+      const modal = document.getElementById('modalSettings');
+      document.getElementById('btnSettings').addEventListener('click', () => {
+        document.getElementById('setUserName').value = settings.userName;
+        document.getElementById('setDailyHours').value = settings.standardDailyHours;
+        document.getElementById('setCountry').value = settings.country;
+        document.getElementById('setAbsences').value = settings.absenceTypes.join(', ');
+        document.getElementById('setChantiers').value = settings.chantierList.join(', ');
+        modal.classList.remove('hidden');
+      });
+
+      document.getElementById('btnCloseSettings').addEventListener('click', () => {
+        modal.classList.add('hidden');
+      });
+
+      document.getElementById('btnSaveSettings').addEventListener('click', () => {
+        settings.userName = document.getElementById('setUserName').value.trim() || 'Didier';
+        settings.standardDailyHours = parseFloat(document.getElementById('setDailyHours').value) || 8.0;
+        settings.country = document.getElementById('setCountry').value;
+        settings.absenceTypes = document.getElementById('setAbsences').value.split(',').map(s => s.trim()).filter(Boolean);
+        settings.chantierList = document.getElementById('setChantiers').value.split(',').map(s => s.trim()).filter(Boolean);
+
+        saveSettings();
+        document.getElementById('headerWorkerName').textContent = settings.userName;
+        modal.classList.add('hidden');
+
+        // Re-evaluate sheet with new settings
+        recalculateSheet();
+        renderTable();
+      });
+
+      // Backup JSON download
+      document.getElementById('btnBackupDownload').addEventListener('click', () => {
+        const sheets = [];
+        for (let i = 0; i < localStorage.length; i++) {
+          const k = localStorage.key(i);
+          if (k && k.startsWith(SHEETS_PREFIX)) {
+            sheets.push(JSON.parse(localStorage.getItem(k)));
+          }
+        }
+        const data = { version: 1, exportedAt: new Date().toISOString(), settings, sheets };
+        const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `WorkCalc_Backup_${new Date().toISOString().slice(0, 10)}.json`;
+        a.click();
+        URL.revokeObjectURL(url);
+      });
+
+      // Restore JSON
+      document.getElementById('fileRestore').addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = (event) => {
+          try {
+            const data = JSON.parse(event.target.result);
+            if (data.settings) {
+              settings = { ...settings, ...data.settings };
+              saveSettings();
+            }
+            if (Array.isArray(data.sheets)) {
+              data.sheets.forEach(s => {
+                localStorage.setItem(`${SHEETS_PREFIX}${s.id}`, JSON.stringify(s));
+              });
+            }
+            alert('Sauvegarde restaurée avec succès !');
+            location.reload();
+          } catch (err) {
+            alert('Erreur lors de la lecture du fichier : ' + err.message);
+          }
+        };
+        reader.readAsText(file);
+      });
+    }
+
+    window.addEventListener('DOMContentLoaded', init);
+  </script>
+</body>
+</html>

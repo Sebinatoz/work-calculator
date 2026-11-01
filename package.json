@@ -1,0 +1,32 @@
+{
+  "name": "work-calculator",
+  "version": "1.0.0",
+  "description": "Calculateur d'heures de prestation optimisé pour Windows, macOS et Linux",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview",
+    "lint": "eslint src --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
+    "test": "vitest run"
+  },
+  "keywords": [
+    "work-calculator",
+    "timesheet",
+    "overtime",
+    "belgium-holidays",
+    "cross-platform",
+    "windows",
+    "macos",
+    "linux"
+  ],
+  "author": "Sebinatoz",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/node": "^20.11.0",
+    "typescript": "^5.3.3",
+    "vite": "^5.0.12",
+    "vitest": "^1.2.1"
+  }
+}
