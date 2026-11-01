@@ -32,10 +32,21 @@ Bienvenue ! Cette application a été conçue pour être **d'une simplicité abs
    * Utilisez les **touches fléchées `↓` (Bas) et `↑` (Haut)** pour passer d'un jour à l'autre dans la même colonne sans toucher à la souris.
    * La touche **Entrée** valide et passe directement au jour suivant.
 
+### D. Chantiers & Lieux 100% Libres
+👉 Dans la colonne **« Chantier / Absence »**, vous êtes totalement libre :
+* **Tapez ce que vous voulez :** nom de client, adresse de chantier, atelier, réunion, etc. Aucune contrainte !
+* **Ou choisissez dans la liste :** cliquez sur la flèche `▼` pour sélectionner un motif d'absence (*Congé*, *Récupération*, *Maladie*...) ou un chantier habituel.
+* **Mémorisation intelligente :** tout nouveau chantier saisi est automatiquement mémorisé et proposé en suggestion pour les jours suivants !
+* **Navigation rapide :** les touches `↓`, `↑` et `Entrée` fonctionnent également dans la colonne chantier.
+
 ---
 
-## 3. Visibilité Maximale & Repérage Facile
+## 3. Visibilité Maximale, Confort & Zoom Natif
 
+* 🔍 **Zoom natif intégré :**
+  * Cliquez sur les boutons **`-`**, **`100%`** ou **`+`** dans la barre du haut pour ajuster la taille de tout l'écran à vos yeux (de 70% à 160%).
+  * Raccourcis clavier instantanés : **`Ctrl +`** (grossir), **`Ctrl -`** (rétrécir), **`Ctrl 0`** (remettre à 100%). Sur Mac : `Cmd +` / `Cmd -` / `Cmd 0`.
+  * Votre zoom préféré est **automatiquement sauvegardé** pour vos prochaines ouvertures.
 * 📍 **Journée d'aujourd'hui en évidence :** La journée en cours est automatiquement mise en valeur avec une bordure verte et un badge distinctif `📍 Aujourd'hui`. Un bouton en haut permet d'y descendre en un clic.
 * 💤 **Week-ends & Jours fériés :** Les samedis et dimanches sont légèrement grisés pour faire ressortir votre semaine de travail, et les jours fériés portent un badge violet explicite (ex. `🎉 Lundi de Pâques`).
 * 📊 **Barre d'avancement du mois :** Au-dessus du tableau, une barre de progression vous indique en temps réel :

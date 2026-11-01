@@ -43,6 +43,7 @@
     /* Print styles */
     @media print {
       body {
+        zoom: 1 !important;
         background: white !important;
         color: #0f172a !important;
         font-size: 9.5pt;
@@ -186,6 +187,19 @@
           <span>❓</span>
           <span>Aide</span>
         </button>
+
+        <!-- Native Zoom Controls -->
+        <div class="flex items-center bg-slate-100 dark:bg-zinc-900 rounded-lg p-0.5 border border-slate-200 dark:border-zinc-800 shadow-sm" title="Zoom d'affichage (Ctrl + / Ctrl - / Ctrl 0)">
+          <button id="btnZoomOut" title="Zoom arrière (Ctrl -)" class="p-1.5 hover:bg-white dark:hover:bg-zinc-800 rounded-md text-slate-600 dark:text-zinc-300 transition text-xs font-bold leading-none">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M20 12H4"/></svg>
+          </button>
+          <button id="btnZoomReset" title="Réinitialiser à 100% (Ctrl 0)" class="px-1.5 py-0.5 hover:bg-white dark:hover:bg-zinc-800 rounded-md text-slate-700 dark:text-zinc-200 transition text-[11px] font-mono font-bold">
+            <span id="zoomLevelText">100%</span>
+          </button>
+          <button id="btnZoomIn" title="Zoom avant (Ctrl +)" class="p-1.5 hover:bg-white dark:hover:bg-zinc-800 rounded-md text-slate-600 dark:text-zinc-300 transition text-xs font-bold leading-none">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"/></svg>
+          </button>
+        </div>
 
         <!-- Theme Toggle (Sun/Moon) -->
         <button id="btnToggleTheme" title="Changer le style (Clair / Sombre)" class="p-2 rounded-lg bg-white dark:bg-zinc-900 hover:bg-slate-100 dark:hover:bg-zinc-800 text-slate-600 dark:text-zinc-300 transition border border-slate-200 dark:border-zinc-800 shadow-sm">
@@ -371,11 +385,12 @@
 
   </main>
 
-  <!-- DATALISTS FOR INSTANT TIME SELECTION -->
+  <!-- DATALISTS FOR INSTANT TIME & CHANTIER SELECTION -->
   <datalist id="listDepart"></datalist>
   <datalist id="listRentree"></datalist>
   <datalist id="listPause"></datalist>
   <datalist id="listRecup"></datalist>
+  <datalist id="listChantiers"></datalist>
 
   <!-- SETTINGS MODAL -->
   <div id="modalSettings" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
@@ -499,6 +514,16 @@
             Cliquez sur <strong>« Imprimer / PDF »</strong> pour obtenir une feuille propre prête à signer pour vous et votre responsable, ou <strong>« Pour Excel »</strong> si la direction souhaite le fichier tableur.
           </p>
         </div>
+
+        <div class="p-3 rounded-xl bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800/80">
+          <p class="font-bold text-amber-900 dark:text-amber-300 flex items-center gap-1.5 mb-1 text-sm">
+            <span>🔍</span> 5. Confort & Personnalisation
+          </p>
+          <ul class="text-amber-800 dark:text-amber-200 space-y-1 list-disc list-inside">
+            <li><strong>Zoom natif :</strong> Utilisez les boutons <strong>- / 100% / +</strong> en haut (ou les touches <code>Ctrl +</code> / <code>Ctrl -</code> / <code>Ctrl 0</code>) pour agrandir ou rétrécir l'affichage selon votre vue.</li>
+            <li><strong>Chantiers 100% libres :</strong> Dans la colonne « Chantier / Absence », vous pouvez <strong>taper n'importe quel texte</strong> (nom de client, lieu, atelier...) ou choisir une suggestion dans la liste !</li>
+          </ul>
+        </div>
       </div>
 
       <div class="border-t border-slate-200 dark:border-zinc-800 pt-3 flex justify-end">
@@ -529,8 +554,11 @@
       customHolidays: [],
       chantierList: ['Chantier Principal', 'Chantier Secondaire', 'Atelier / Dépôt', 'Entretien'],
       absenceTypes: ['Congé', 'Congé payé', 'Récupération', 'Férié', 'Maladie', 'Formation'],
-      theme: 'dark'
+      theme: 'dark',
+      zoomLevel: 100
     };
+
+    let currentZoom = 100;
 
     let currentYear = 2026;
     let currentMonth = 1;
@@ -746,10 +774,20 @@
         if (raw) settings = { ...settings, ...JSON.parse(raw) };
       } catch (e) { console.error(e); }
       applyTheme(settings.theme || 'dark');
+      if (settings.zoomLevel) currentZoom = settings.zoomLevel;
     }
 
     function saveSettings() {
       localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings));
+    }
+
+    function applyZoom(level) {
+      currentZoom = Math.min(160, Math.max(70, Math.round(level)));
+      document.body.style.zoom = `${currentZoom}%`;
+      const txt = document.getElementById('zoomLevelText');
+      if (txt) txt.textContent = `${currentZoom}%`;
+      settings.zoomLevel = currentZoom;
+      saveSettings();
     }
 
     function applyTheme(theme) {
@@ -784,6 +822,7 @@
         try {
           currentSheet = JSON.parse(raw);
           recalculateSheet();
+          populateDatalists();
           return;
         } catch (e) { console.error(e); }
       }
@@ -843,6 +882,7 @@
         summary: {}
       };
       recalculateSheet();
+      populateDatalists();
     }
 
     function saveCurrentSheet() {
@@ -900,6 +940,20 @@
         recupSlots.push(`${h}:${m}`);
       }
       listRecup.innerHTML = recupSlots.map(t => `<option value="${t}">`).join('');
+
+      // Chantiers & Absences (suggestions pour la saisie libre)
+      const listChantiers = document.getElementById('listChantiers');
+      if (listChantiers) {
+        const inSheet = (currentSheet && currentSheet.days)
+          ? currentSheet.days.map(d => d.chantier).filter(Boolean)
+          : [];
+        const combined = Array.from(new Set([
+          ...settings.absenceTypes,
+          ...settings.chantierList,
+          ...inSheet
+        ]));
+        listChantiers.innerHTML = combined.map(item => `<option value="${item}">`).join('');
+      }
     }
 
     // --- UI RENDERING ---
@@ -909,16 +963,6 @@
 
       const now = new Date();
       const todayIso = `${now.getFullYear()}-${(now.getMonth() + 1).toString().padStart(2, '0')}-${now.getDate().toString().padStart(2, '0')}`;
-
-      const optionsChantiers = [
-        '<option value="">-- Choisir une option --</option>',
-        '<optgroup label="👉 Absences & Congés">',
-        ...settings.absenceTypes.map(a => `<option value="${a}">${a}</option>`),
-        '</optgroup>',
-        '<optgroup label="📍 Chantiers & Lieux">',
-        ...settings.chantierList.map(c => `<option value="${c}">${c}</option>`),
-        '</optgroup>'
-      ].join('');
 
       currentSheet.days.forEach((day, index) => {
         const tr = document.createElement('tr');
@@ -982,9 +1026,7 @@
             }
           </td>
           <td class="p-1.5">
-            <select data-index="${index}" data-field="chantier" class="w-full bg-white dark:bg-zinc-800/90 border-2 border-slate-200 dark:border-zinc-700 rounded-xl px-2.5 py-1.5 text-slate-800 dark:text-zinc-200 outline-none focus:ring-2 focus:ring-emerald-500/40 focus:border-emerald-500 text-xs font-semibold shadow-sm cursor-pointer transition hover:border-slate-300 dark:hover:border-zinc-600">
-              ${optionsChantiers}
-            </select>
+            <input type="text" list="listChantiers" data-index="${index}" data-field="chantier" class="chantier-input w-full bg-white dark:bg-zinc-800/90 border-2 border-slate-200 dark:border-zinc-700 rounded-xl px-2.5 py-1.5 text-slate-800 dark:text-zinc-200 outline-none focus:ring-2 focus:ring-emerald-500/40 focus:border-emerald-500 text-xs font-semibold shadow-sm cursor-pointer transition hover:border-slate-300 dark:hover:border-zinc-600" placeholder="Chantier ou absence..." value="${day.chantier || ''}" autocomplete="off" />
           </td>
           <td class="p-1.5 text-center no-print whitespace-nowrap">
             ${isFilled ? `
@@ -998,11 +1040,6 @@
             `}
           </td>
         `;
-
-        const select = tr.querySelector('select');
-        if (select && day.chantier) {
-          select.value = day.chantier;
-        }
 
         tbody.appendChild(tr);
       });
@@ -1120,11 +1157,48 @@
         });
       });
 
-      document.querySelectorAll('select[data-field="chantier"]').forEach(select => {
-        select.addEventListener('change', (e) => {
+      // Free-form Chantier & Type input listeners
+      document.querySelectorAll('.chantier-input').forEach(input => {
+        // Auto-select text on focus for effortless replacement
+        input.addEventListener('focus', (e) => {
+          e.target.select();
+        });
+
+        const handleChantierUpdate = (e) => {
           const idx = parseInt(e.target.dataset.index, 10);
-          currentSheet.days[idx].chantier = e.target.value;
+          const val = e.target.value.trim();
+          currentSheet.days[idx].chantier = val;
           saveCurrentSheet();
+
+          // Auto-add new custom chantier to suggestions if not empty
+          if (val && !settings.chantierList.includes(val) && !settings.absenceTypes.includes(val)) {
+            settings.chantierList.push(val);
+            saveSettings();
+            populateDatalists();
+          }
+        };
+
+        input.addEventListener('change', handleChantierUpdate);
+        input.addEventListener('blur', handleChantierUpdate);
+
+        // ArrowUp / ArrowDown / Enter navigation
+        input.addEventListener('keydown', (e) => {
+          const idx = parseInt(e.target.dataset.index, 10);
+          if (e.key === 'ArrowDown' || e.key === 'Enter') {
+            e.preventDefault();
+            const next = document.querySelector(`.chantier-input[data-index="${idx + 1}"]`);
+            if (next) {
+              next.focus();
+              next.select();
+            }
+          } else if (e.key === 'ArrowUp') {
+            e.preventDefault();
+            const prev = document.querySelector(`.chantier-input[data-index="${idx - 1}"]`);
+            if (prev) {
+              prev.focus();
+              prev.select();
+            }
+          }
         });
       });
 
@@ -1203,6 +1277,28 @@
       loadSettings();
       populateDatalists();
       document.getElementById('headerWorkerName').textContent = settings.userName;
+
+      // Apply and wire up native Zoom controls
+      applyZoom(settings.zoomLevel || 100);
+      document.getElementById('btnZoomIn').addEventListener('click', () => applyZoom(currentZoom + 10));
+      document.getElementById('btnZoomOut').addEventListener('click', () => applyZoom(currentZoom - 10));
+      document.getElementById('btnZoomReset').addEventListener('click', () => applyZoom(100));
+
+      // Global keyboard zoom listener (Ctrl + / Ctrl - / Ctrl 0, Mac Cmd + / Cmd - / Cmd 0)
+      window.addEventListener('keydown', (e) => {
+        if (e.ctrlKey || e.metaKey) {
+          if (e.key === '+' || e.key === '=' || e.code === 'NumpadAdd') {
+            e.preventDefault();
+            applyZoom(currentZoom + 10);
+          } else if (e.key === '-' || e.code === 'NumpadSubtract') {
+            e.preventDefault();
+            applyZoom(currentZoom - 10);
+          } else if (e.key === '0' || e.code === 'Numpad0') {
+            e.preventDefault();
+            applyZoom(100);
+          }
+        }
+      });
 
       currentYear = 2026;
       currentMonth = 1;
@@ -1319,6 +1415,7 @@
         settings.chantierList = document.getElementById('setChantiers').value.split(',').map(s => s.trim()).filter(Boolean);
 
         saveSettings();
+        populateDatalists();
         document.getElementById('headerWorkerName').textContent = settings.userName;
         modal.classList.add('hidden');
 
