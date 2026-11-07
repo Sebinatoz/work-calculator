@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { calculateDay, calculateMonthSummary, generateMonthSheet } from './calculations';
 import { DEFAULT_SETTINGS } from '../storage/db';
-import { minutesToTimeString, normalizeTimeInput, parseTimeToMinutes } from './time';
+import { formatDailyHours, minutesToTimeString, normalizeTimeInput, parseDailyHours, parseTimeToMinutes } from './time';
 import { getBelgianHolidays, getEasterSunday } from './holidays';
 
 describe('Time utilities', () => {
@@ -24,6 +24,33 @@ describe('Time utilities', () => {
     expect(normalizeTimeInput('830')).toBe('08:30');
     expect(normalizeTimeInput('1645')).toBe('16:45');
     expect(normalizeTimeInput('7:15')).toBe('07:15');
+  });
+
+  it('parses daily hours in all human formats (7h30, 7:30, 7,5, 7.5, 7h48)', () => {
+    expect(parseDailyHours('7h30')).toBe(7.5);
+    expect(parseDailyHours('7h')).toBe(7.0);
+    expect(parseDailyHours('7h15')).toBe(7.25);
+    expect(parseDailyHours('7h45')).toBe(7.75);
+    expect(parseDailyHours('7h48')).toBe(7.8);
+    expect(parseDailyHours('7:30')).toBe(7.5);
+    expect(parseDailyHours('07:30')).toBe(7.5);
+    expect(parseDailyHours('7,5')).toBe(7.5);
+    expect(parseDailyHours('7.5')).toBe(7.5);
+    expect(parseDailyHours('7,25')).toBe(7.25);
+    expect(parseDailyHours('7,5h')).toBe(7.5);
+    expect(parseDailyHours('8')).toBe(8.0);
+    expect(parseDailyHours('')).toBe(8.0);
+    expect(parseDailyHours(null)).toBe(8.0);
+    expect(parseDailyHours(7.5)).toBe(7.5);
+  });
+
+  it('formats decimal hours into standard French notation (e.g. 7h30, 8h00)', () => {
+    expect(formatDailyHours(8)).toBe('8h00');
+    expect(formatDailyHours(7.5)).toBe('7h30');
+    expect(formatDailyHours(7.25)).toBe('7h15');
+    expect(formatDailyHours(7.75)).toBe('7h45');
+    expect(formatDailyHours(7.8)).toBe('7h48');
+    expect(formatDailyHours(null)).toBe('8h00');
   });
 });
 
@@ -114,6 +141,39 @@ describe('Daily Work Calculation (Rule: 8h standard, negative when worked < base
     expect(day.totalMinutes).toBe(0);
     expect(day.hSupMinutes).toBe(0);
     expect(day.hNegatifMinutes).toBe(0);
+  });
+
+  it('correctly calculates overtime and deficit with 7h30 daily base (standardDailyHours: 7.5)', () => {
+    const customSettings = { ...DEFAULT_SETTINGS, standardDailyHours: 7.5 };
+
+    // Exactly 7h30 worked (08:00 to 16:00, 30m pause = 7h30)
+    const exactDay = calculateDay(
+      { date: '2026-01-05', depart: '08:00', rentree: '16:00', pause: '00:30' },
+      customSettings
+    );
+    expect(exactDay.totalMinutes).toBe(450); // 7h30
+    expect(exactDay.hSupMinutes).toBe(0);
+    expect(exactDay.hNegatifMinutes).toBe(0);
+
+    // 8h worked (30m overtime over 7h30 base)
+    const overDay = calculateDay(
+      { date: '2026-01-06', depart: '08:00', rentree: '16:30', pause: '00:30' },
+      customSettings
+    );
+    expect(overDay.totalMinutes).toBe(480);
+    expect(overDay.hSupMinutes).toBe(30); // +00:30:00
+    expect(overDay.hSupFormatted).toBe('00:30:00');
+    expect(overDay.hNegatifMinutes).toBe(0);
+
+    // 7h worked (30m deficit under 7h30 base)
+    const underDay = calculateDay(
+      { date: '2026-01-07', depart: '08:00', rentree: '15:30', pause: '00:30' },
+      customSettings
+    );
+    expect(underDay.totalMinutes).toBe(420);
+    expect(underDay.hSupMinutes).toBe(0);
+    expect(underDay.hNegatifMinutes).toBe(30); // -00:30:00
+    expect(underDay.hNegatifFormatted).toBe('00:30:00');
   });
 });
 
