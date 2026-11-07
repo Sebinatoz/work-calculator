@@ -68,7 +68,7 @@ Le dossier [`docs/`](docs/) contient toute la documentation technique et fonctio
 * **Design :** Tailwind CSS avec thème sombre/clair
 * **Tests :** Vitest
 * **Build :** Vite 5
-* **Desktop Natif :** Compatible Tauri (binaire autonome < 20 Mo)
+* **Desktop Multiplateforme :** Exécutables natifs autonomes (.exe pour Windows, .dmg pour macOS, .AppImage / .deb pour Linux via Electron & GitHub Actions)
 
 ---
 

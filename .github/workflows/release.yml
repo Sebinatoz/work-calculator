@@ -1,0 +1,104 @@
+name: Release Desktop Multiplateforme
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+    inputs:
+      release_title:
+        description: 'Titre de la Release (optionnel)'
+        required: false
+        default: 'Work Calculator Desktop'
+
+permissions:
+  contents: write
+
+jobs:
+  build-desktop:
+    name: Build Desktop (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [windows-latest, macos-latest, ubuntu-latest]
+
+    steps:
+      - name: Checkout du code
+        uses: actions/checkout@v4
+
+      - name: Configuration de Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: Installation des dépendances
+        run: npm install
+
+      - name: Validation des tests unitaires
+        run: npm test
+
+      # Linux packaging dependencies (pour AppImage et .deb)
+      - name: Dépendances système Linux
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libarchive-tools desktop-file-utils
+
+      # Build Windows (.exe NSIS + Portable)
+      - name: Compiler pour Windows (.exe)
+        if: runner.os == 'Windows'
+        run: npm run dist:win
+
+      # Build macOS (.dmg + .zip Apple Silicon & Intel)
+      - name: Compiler pour macOS (.dmg)
+        if: runner.os == 'macOS'
+        run: npm run dist:mac
+
+      # Build Linux (.AppImage + .deb)
+      - name: Compiler pour Linux (.AppImage, .deb)
+        if: runner.os == 'Linux'
+        run: npm run dist:linux
+
+      # Sauvegarde des exécutables générés comme artefacts du workflow
+      - name: Sauvegarder les exécutables (Artefacts)
+        uses: actions/upload-artifact@v4
+        with:
+          name: work-calculator-${{ matrix.os }}
+          path: |
+            release/*.exe
+            release/*.dmg
+            release/*.zip
+            release/*.AppImage
+            release/*.deb
+          if-no-files-found: error
+
+  publish-release:
+    name: Publication de la Release GitHub
+    needs: build-desktop
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'tags/v')
+
+    steps:
+      - name: Checkout du code
+        uses: actions/checkout@v4
+
+      - name: Téléchargement de tous les artefacts de build
+        uses: actions/download-artifact@v4
+        with:
+          path: dist-release
+          merge-multiple: true
+
+      - name: Création / Mise à jour de la Release GitHub
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            dist-release/*.exe
+            dist-release/*.dmg
+            dist-release/*.zip
+            dist-release/*.AppImage
+            dist-release/*.deb
+          generate_release_notes: true
+          draft: false
+          prerelease: false
