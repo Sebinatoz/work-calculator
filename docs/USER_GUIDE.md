@@ -68,7 +68,7 @@ Bienvenue ! Cette application a été conçue pour être **d'une simplicité abs
 
 En haut à droite, la grande carte récapitulative vous explique votre situation en français limpide :
 * 🟢 **Vert :** *« Vous avez +04:30:00 d'avance (à récupérer ou payé) »*
-* 🟠 **Orange :** *« Vous avez -01:15:00 de retard à rattraper »*
+* 🔴 **Rouge :** *« Vous avez -01:15:00 de retard à rattraper »*
 * ⚪ **Gris :** *« Solde parfait : équilibré »*
 
 Le solde du mois d'avant est **automatiquement reporté** dès que vous changez de mois.
@@ -77,7 +77,7 @@ Le solde du mois d'avant est **automatiquement reporté** dès que vous changez 
 
 ## 5. À la Fin du Mois : Donner sa Feuille au Patron
 
-* Cliquez sur **`🖨️ Imprimer / PDF`** : une feuille A4 propre et officielle s'affiche avec la grille du mois et les deux zones de signature (pour vous et votre responsable).
+* Cliquez sur **`🖨️ Imprimer / PDF`** : votre fiche des heures complète et propre au format A4 s'affiche directement (avec code couleur vert/rouge automatique et fond gris pour week-ends/fériés).
 * Cliquez sur **`📊 Pour Excel`** si la comptabilité préfère recevoir le fichier tableur habituel.
 
 ### Boutons d'Action Rapide
@@ -96,7 +96,7 @@ En haut de votre feuille de travail, six cartes récapitulatives vous donnent un
 5. **Solde Mois Précédent :** Report automatique de votre solde du mois d'avant. Vous pouvez le corriger manuellement si besoin.
 6. **Solde Cumulé Total :**
    * **En Vert** : Vous êtes en crédit d'heures.
-   * **En Orange** : Vous êtes en débit d'heures.
+   * **En Rouge** : Vous êtes en débit d'heures.
    * **En Blanc** : Solde parfaitement équilibré.
 
 ---
@@ -111,11 +111,11 @@ En haut de votre feuille de travail, six cartes récapitulatives vous donnent un
 * Cliquez sur **« Imprimer / PDF »** en haut à droite.
 * L'application prépare automatiquement une feuille officielle parfaitement calibrée pour le format standard **A4 portrait** :
   * **En-tête officiel clair :** Titre en majuscules, nom du collaborateur, base contractuelle, pays et date exacte d'édition.
-  * **Synthèse récapitulative en 6 encadrés :** Volume presté, heures sup, déficit, récupérations prises, report antérieur, et **Solde Cumulé Définitif** (avec mention explicite crédit/débit).
-  * **Grille épurée et lisible :** Colonnes typographiques sans emojis perturbateurs, week-ends subtilement grisés pour repérer les semaines d'un coup d'œil, boutons d'action masqués, chiffres parfaitement alignés.
-  * **Totaux de clôture complets :** Les totaux du mois ainsi que le report et le solde cumulé final s'affichent au bas du tableau.
-  * **Double bloc de signatures officiel :** Emplacements formels pour le visa du collaborateur (*« Lu et approuvé, certifié exact »*) et la validation de la direction (*« Bon pour accord »*), avec mention de date.
-  * **Tenue sur 1 page :** Les marges et espacements sont calculés pour tenir sur **une seule page A4** sans saut de page intempestif.
+  * **Synthèse récapitulative en 6 encadrés :** Volume presté, heures sup (vert), déficit (rouge), récupérations prises, report antérieur, et **Solde Cumulé Définitif** (avec mention explicite crédit/débit).
+  * **Grille épurée et lisible :** Colonnes typographiques sans emojis perturbateurs, week-ends et jours fériés nettement grisés pour repérer le rythme du mois, heures sup en vert vif et heures négatives en rouge vif, boutons d'action masqués, chiffres parfaitement alignés.
+  * **Totaux de clôture complets :** Les totaux du mois ainsi que le report et le solde cumulé final s'affichent au bas du tableau avec mise en valeur colorée.
+  * **Fiche d'heures intégrale sans signatures :** Focalisée à 100% sur le relevé d'activité et les totaux d'heures sans encombrer la feuille avec des blocs de signature superflus.
+  * **Tenue sur 1 page A4 garantie :** Le retrait des blocs de signature libère tout l'espace nécessaire pour que même les mois de 31 jours tiennent confortablement sur **une seule page A4**.
 * Dans la fenêtre qui s'ouvre, choisissez votre imprimante papier ou sélectionnez **« Enregistrer au format PDF »**.
 
 ---

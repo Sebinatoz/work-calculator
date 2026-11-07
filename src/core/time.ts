@@ -124,3 +124,85 @@ export function generateTimeSlots(
   }
   return slots;
 }
+
+/**
+ * Parses user input for daily work base into decimal hours.
+ * Accepts multiple human formats:
+ * - "7h30", "7h", "7h15", "7h45", "7h48"
+ * - "7:30", "07:30"
+ * - "7,5", "7,25", "7,75", "7,8" (French decimal comma)
+ * - "7.5", "7.25", "7.75", "7.8" (Standard decimal dot)
+ * - "7,5h", "7.5h"
+ * - numbers: 7.5 -> 7.5
+ */
+export function parseDailyHours(input: string | number | null | undefined): number {
+  if (input === null || input === undefined) return 8.0;
+  if (typeof input === 'number') {
+    return isNaN(input) || input <= 0 ? 8.0 : Math.round(input * 1000) / 1000;
+  }
+
+  let str = String(input).trim().toLowerCase();
+  if (!str) return 8.0;
+
+  // Clean trailing duration units like "min", "m"
+  str = str.replace(/min|m/gi, '').trim();
+
+  // If format contains 'h' (e.g. "7h30", "7h", "7,5h", "7.5h")
+  if (str.includes('h')) {
+    const parts = str.split('h');
+    const hPart = parts[0].trim().replace(',', '.');
+    const h = parseFloat(hPart) || 0;
+    const mPart = parts[1] ? parts[1].trim() : '';
+
+    let m = 0;
+    if (mPart) {
+      if (mPart.length === 1) {
+        // "7h3" -> 30 min
+        m = (parseInt(mPart, 10) || 0) * 10;
+      } else {
+        m = parseFloat(mPart.replace(',', '.')) || 0;
+      }
+    }
+
+    const total = h + m / 60;
+    return total > 0 ? Math.round(total * 1000) / 1000 : 8.0;
+  }
+
+  // If format contains ':' (e.g. "07:30", "7:30")
+  if (str.includes(':')) {
+    const parts = str.split(':');
+    const h = parseInt(parts[0], 10) || 0;
+    const mStr = parts[1] ? parts[1].trim() : '';
+    let m = 0;
+    if (mStr.length === 1) {
+      m = (parseInt(mStr, 10) || 0) * 10;
+    } else {
+      m = parseInt(mStr, 10) || 0;
+    }
+    const total = h + m / 60;
+    return total > 0 ? Math.round(total * 1000) / 1000 : 8.0;
+  }
+
+  // Decimal with comma or dot (e.g. "7,5", "7.5", "7,75", "8")
+  str = str.replace(',', '.');
+  const num = parseFloat(str);
+  if (!isNaN(num) && num > 0) {
+    return Math.round(num * 1000) / 1000;
+  }
+
+  return 8.0;
+}
+
+/**
+ * Formats decimal hours into standard readable French notation (e.g. 7.5 -> "7h30", 8 -> "8h00").
+ */
+export function formatDailyHours(hours: number | null | undefined): string {
+  if (hours === null || hours === undefined || isNaN(hours) || hours <= 0) {
+    return '8h00';
+  }
+  const totalMin = Math.round(hours * 60);
+  const h = Math.floor(totalMin / 60);
+  const m = totalMin % 60;
+  return `${h}h${m.toString().padStart(2, '0')}`;
+}
+
