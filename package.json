@@ -39,7 +39,7 @@
     "vitest": "^1.2.1"
   },
   "build": {
-    "publish": null,
+
     "appId": "com.sebinatoz.workcalculator",
     "productName": "Work Calculator",
     "copyright": "Copyright © 2026 Sebinatoz",
@@ -113,8 +113,8 @@
       ],
       "icon": "assets/icon.png",
       "category": "Office",
-      "maintainer": "Sebinatoz <sebinatoz@users.noreply.github.com>",
-      "desktopName": "work-calculator"
+      "maintainer": "Sebinatoz <sebinatoz@users.noreply.github.com>"
+
     }
   }
 }
