@@ -53,7 +53,8 @@
       }
 
       html, body {
-        background: white !important;
+        background: #ffffff !important;
+        background-color: #ffffff !important;
         color: #0f172a !important;
         font-size: 8pt !important;
         line-height: 1.15 !important;
@@ -74,12 +75,16 @@
         padding: 0 !important;
         margin: 0 !important;
         gap: 0 !important;
+        background: #ffffff !important;
       }
 
+      /* Force White Table Container regardless of Dark Mode */
       .table-container {
         overflow: visible !important;
         max-height: none !important;
         box-shadow: none !important;
+        background: #ffffff !important;
+        background-color: #ffffff !important;
         border: 1.5px solid #334155 !important;
         border-radius: 3px !important;
       }
@@ -88,8 +93,11 @@
         width: 100% !important;
         border-collapse: collapse !important;
         table-layout: fixed !important;
+        background: #ffffff !important;
+        background-color: #ffffff !important;
       }
 
+      thead tr,
       thead th {
         background-color: #f1f5f9 !important;
         color: #0f172a !important;
@@ -101,28 +109,61 @@
         text-transform: uppercase !important;
       }
 
-      tbody td {
+      thead th.th-sup {
+        background-color: #f0fdf4 !important;
+        color: #15803d !important;
+      }
+
+      thead th.th-neg {
+        background-color: #fef2f2 !important;
+        color: #b91c1c !important;
+      }
+
+      /* All Table Rows - Default to Crisp Bright White for Workdays */
+      tbody {
+        background-color: #ffffff !important;
+      }
+
+      tbody tr,
+      tbody tr td {
+        background-color: #ffffff !important;
+        color: #0f172a !important;
         padding: 1.5px 2px !important;
-        border-bottom: 1px solid #e2e8f0 !important;
-        border-right: 1px solid #e2e8f0 !important;
+        border-bottom: 1px solid #cbd5e1 !important;
+        border-right: 1px solid #cbd5e1 !important;
         height: 18px !important;
         line-height: 1.1 !important;
         vertical-align: middle !important;
       }
 
-      tbody tr {
-        page-break-inside: avoid !important;
+      tbody tr td span {
+        color: #0f172a !important;
       }
 
-      /* Clean alternating / weekend & holiday rows : GRIS pour les weekend ou jours férié */
+      /* Date column: clear, high-contrast, highly legible dark text */
+      tbody tr td:first-child,
+      tbody tr td:first-child span {
+        font-weight: 800 !important;
+        color: #0f172a !important;
+        font-size: 8pt !important;
+        padding-left: 4px !important;
+      }
+
+      /* Week-end & Jours Fériés : Fond gris franc et clair bien contrasté */
       tbody tr.row-weekend,
       tbody tr.row-holiday,
       tbody tr.row-weekend td,
       tbody tr.row-holiday td {
         background-color: #e2e8f0 !important; /* Gris franc et lisible à l'impression */
-        color: #334155 !important;
-        -webkit-print-color-adjust: exact !important;
-        print-color-adjust: exact !important;
+        color: #1e293b !important;
+      }
+
+      tbody tr.row-weekend td:first-child,
+      tbody tr.row-holiday td:first-child,
+      tbody tr.row-weekend td:first-child span,
+      tbody tr.row-holiday td:first-child span {
+        color: #0f172a !important;
+        font-weight: 800 !important;
       }
 
       tbody tr.row-weekend td[id^="cell-total-"],
@@ -133,12 +174,13 @@
       tbody tr.row-weekend input,
       tbody tr.row-holiday input {
         background-color: transparent !important;
-        color: #334155 !important;
+        color: #0f172a !important;
       }
 
-      tbody tr.row-today {
+      tbody tr.row-today,
+      tbody tr.row-today td {
         background-color: #ffffff !important;
-        border-left: none !important;
+        border-left: 1px solid #cbd5e1 !important;
       }
 
       .badge-today,
@@ -147,6 +189,7 @@
       }
 
       .badge-holiday {
+        display: inline-block !important;
         background: #cbd5e1 !important;
         border: 1px solid #94a3b8 !important;
         color: #1e293b !important;
@@ -154,8 +197,13 @@
         font-size: 6.5pt !important;
         font-weight: 700 !important;
         border-radius: 2px !important;
-        -webkit-print-color-adjust: exact !important;
-        print-color-adjust: exact !important;
+      }
+
+      /* Total Presté cell on workdays: subtle clean white/slate */
+      tbody tr td[id^="cell-total-"] {
+        background-color: #f8fafc !important;
+        color: #0f172a !important;
+        font-weight: 800 !important;
       }
 
       /* Clean inputs for print */
@@ -181,6 +229,12 @@
         font-weight: 600 !important;
       }
 
+      /* Hide placeholders in print completely so blank days stay clean */
+      input::placeholder {
+        color: transparent !important;
+        opacity: 0 !important;
+      }
+
       input[list]::-webkit-calendar-picker-indicator {
         display: none !important;
       }
@@ -199,8 +253,6 @@
         font-size: 7.5pt !important;
         font-weight: 800 !important;
         font-family: monospace !important;
-        -webkit-print-color-adjust: exact !important;
-        print-color-adjust: exact !important;
       }
 
       .badge-negative,
@@ -216,21 +268,22 @@
         font-size: 7.5pt !important;
         font-weight: 800 !important;
         font-family: monospace !important;
-        -webkit-print-color-adjust: exact !important;
-        print-color-adjust: exact !important;
       }
 
-      /* Totals footer */
-      tfoot {
-        background-color: #f8fafc !important;
-        border-top: 2px solid #334155 !important;
-      }
-
+      /* Totals footer - Crisp, clean, never dark */
+      tfoot,
+      tfoot tr,
       tfoot td {
+        background-color: #f8fafc !important;
+        color: #0f172a !important;
         padding: 2.5px 3px !important;
         font-size: 7.5pt !important;
         border-right: 1px solid #cbd5e1 !important;
         border-bottom: 1px solid #cbd5e1 !important;
+      }
+
+      tfoot tr:first-child td {
+        border-top: 2px solid #334155 !important;
       }
 
       tfoot #footSup {
@@ -243,6 +296,11 @@
         color: #b91c1c !important;
         background-color: #fee2e2 !important;
         font-weight: 800 !important;
+      }
+
+      tfoot #footTotal {
+        background-color: #f1f5f9 !important;
+        color: #0f172a !important;
       }
     }
     .print-only {
@@ -395,8 +453,7 @@
     <!-- Top Bar -->
     <div class="flex justify-between items-start pb-1.5 mb-1.5 border-b-2 border-slate-800">
       <div>
-        <div class="flex items-center gap-1.5">
-          <span class="inline-block w-2.5 h-2.5 bg-slate-900 rounded-sm"></span>
+        <div>
           <h1 class="text-base font-black tracking-tight text-slate-900 uppercase">Relevé des Heures de Prestation</h1>
         </div>
         <p class="text-[10px] text-slate-600 mt-0.5">
@@ -1209,7 +1266,7 @@
         if (isToday) {
           badge = `<span class="badge-today inline-flex items-center gap-1 text-[10px] font-extrabold text-emerald-800 dark:text-emerald-300 bg-emerald-100 dark:bg-emerald-950/80 px-2 py-0.5 rounded-full border border-emerald-300 dark:border-emerald-700">📍 Aujourd'hui</span>`;
         } else if (day.isHoliday) {
-          badge = `<span class="badge-holiday inline-flex items-center gap-1 text-[10px] text-slate-700 dark:text-zinc-200 bg-slate-200 dark:bg-zinc-700 px-2 py-0.5 rounded-full border border-slate-300 dark:border-zinc-600 font-bold truncate max-w-[130px]" title="${day.holidayName}">🎉 ${day.holidayName}</span>`;
+          badge = `<span class="badge-holiday inline-flex items-center gap-1 text-[10px] text-slate-700 dark:text-zinc-200 bg-slate-200 dark:bg-zinc-700 px-2 py-0.5 rounded-full border border-slate-300 dark:border-zinc-600 font-bold truncate max-w-[130px]" title="${day.holidayName}"><span class="no-print">🎉 </span>${day.holidayName}</span>`;
         } else if (day.isWeekend) {
           badge = `<span class="badge-weekend inline-block text-[10px] font-semibold text-slate-400 dark:text-zinc-500 bg-slate-200/50 dark:bg-zinc-800/60 px-1.5 py-0.2 rounded uppercase">Week-end</span>`;
         }
