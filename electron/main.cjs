@@ -1,7 +1,92 @@
-const { app, BrowserWindow, shell, Menu } = require('electron');
+const { app, BrowserWindow, shell, Menu, ipcMain, dialog } = require('electron');
 const path = require('path');
+const { autoUpdater } = require('electron-updater');
+
+// Configure autoUpdater
+autoUpdater.logger = console;
+autoUpdater.autoDownload = false;
+autoUpdater.autoInstallOnAppQuit = true;
 
 let mainWindow = null;
+
+// Safe updater check helper
+async function checkForUpdatesSafe(manual = false) {
+  if (!app.isPackaged) {
+    console.log('[Updater] Mode développement : vérification simulée (non packagé).');
+    if (mainWindow && !mainWindow.isDestroyed()) {
+      mainWindow.webContents.send('updater:not-available', {
+        version: app.getVersion(),
+        isDev: true,
+        message: 'Mode développement (non packagé)',
+      });
+    }
+    return { status: 'dev' };
+  }
+
+  try {
+    return await autoUpdater.checkForUpdates();
+  } catch (err) {
+    console.error('[Updater] Erreur lors de la vérification :', err);
+    if (mainWindow && !mainWindow.isDestroyed()) {
+      mainWindow.webContents.send('updater:error', {
+        message: err.message || 'Impossible de vérifier les mises à jour pour le moment.',
+      });
+    }
+    return { error: err.message };
+  }
+}
+
+// Forward autoUpdater events to the renderer window
+autoUpdater.on('checking-for-update', () => {
+  if (mainWindow && !mainWindow.isDestroyed()) {
+    mainWindow.webContents.send('updater:checking');
+  }
+});
+
+autoUpdater.on('update-available', (info) => {
+  if (mainWindow && !mainWindow.isDestroyed()) {
+    mainWindow.webContents.send('updater:available', {
+      version: info.version,
+      releaseNotes: info.releaseNotes,
+      releaseDate: info.releaseDate,
+    });
+  }
+});
+
+autoUpdater.on('update-not-available', (info) => {
+  if (mainWindow && !mainWindow.isDestroyed()) {
+    mainWindow.webContents.send('updater:not-available', {
+      version: app.getVersion(),
+    });
+  }
+});
+
+autoUpdater.on('download-progress', (progressObj) => {
+  if (mainWindow && !mainWindow.isDestroyed()) {
+    mainWindow.webContents.send('updater:progress', {
+      percent: Math.round(progressObj.percent || 0),
+      bytesPerSecond: progressObj.bytesPerSecond || 0,
+      transferred: progressObj.transferred || 0,
+      total: progressObj.total || 0,
+    });
+  }
+});
+
+autoUpdater.on('update-downloaded', (info) => {
+  if (mainWindow && !mainWindow.isDestroyed()) {
+    mainWindow.webContents.send('updater:downloaded', {
+      version: info.version,
+    });
+  }
+});
+
+autoUpdater.on('error', (err) => {
+  if (mainWindow && !mainWindow.isDestroyed()) {
+    mainWindow.webContents.send('updater:error', {
+      message: err && err.message ? err.message : String(err),
+    });
+  }
+});
 
 function createWindow() {
   const isDev = process.env.NODE_ENV === 'development';
@@ -21,7 +106,8 @@ function createWindow() {
     webPreferences: {
       nodeIntegration: false,
       contextIsolation: true,
-      sandbox: true,
+      preload: path.join(__dirname, 'preload.cjs'),
+      sandbox: false,
       spellcheck: false,
     },
   });
@@ -35,6 +121,13 @@ function createWindow() {
 
   mainWindow.once('ready-to-show', () => {
     mainWindow.show();
+
+    // In production, automatically check for updates after 4 seconds
+    if (app.isPackaged) {
+      setTimeout(() => {
+        checkForUpdatesSafe(false);
+      }, 4000);
+    }
   });
 
   // Handle external links (open in user's default browser)
@@ -96,6 +189,16 @@ function createWindow() {
       label: 'Aide',
       submenu: [
         {
+          label: 'Vérifier les mises à jour...',
+          click: () => {
+            if (mainWindow && !mainWindow.isDestroyed()) {
+              mainWindow.webContents.send('updater:manual-check-requested');
+            }
+            checkForUpdatesSafe(true);
+          },
+        },
+        { type: 'separator' },
+        {
           label: 'Dépôt GitHub',
           click: () => {
             shell.openExternal('https://github.com/Sebinatoz/work-calculator');
@@ -104,11 +207,10 @@ function createWindow() {
         {
           label: 'À propos de Work Calculator',
           click: () => {
-            const { dialog } = require('electron');
             dialog.showMessageBox(mainWindow, {
               type: 'info',
               title: 'À propos',
-              message: 'Work Calculator v1.0.0',
+              message: `Work Calculator v${app.getVersion()}`,
               detail: "Calculateur d'heures de prestation avec gestion des heures supplémentaires, du solde de récupération et export conforme.\n\nCréé par Sebinatoz.",
             });
           },
@@ -124,6 +226,34 @@ function createWindow() {
     mainWindow = null;
   });
 }
+
+// IPC Handlers
+ipcMain.handle('app:get-version', () => app.getVersion());
+
+ipcMain.handle('app:check-for-updates', async () => {
+  return await checkForUpdatesSafe(true);
+});
+
+ipcMain.handle('app:download-update', async () => {
+  try {
+    return await autoUpdater.downloadUpdate();
+  } catch (err) {
+    console.error('[Updater] Erreur downloadUpdate :', err);
+    throw err;
+  }
+});
+
+ipcMain.handle('app:quit-and-install', () => {
+  setImmediate(() => {
+    autoUpdater.quitAndInstall(false, true);
+  });
+});
+
+ipcMain.handle('app:open-external', async (_event, url) => {
+  if (url && (url.startsWith('http://') || url.startsWith('https://'))) {
+    await shell.openExternal(url);
+  }
+});
 
 // Ensure single instance lock
 const gotTheLock = app.requestSingleInstanceLock();

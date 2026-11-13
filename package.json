@@ -1,6 +1,6 @@
 {
   "name": "work-calculator",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "Calculateur d'heures de prestation optimisé pour Windows, macOS et Linux",
   "private": true,
   "type": "module",
@@ -39,10 +39,14 @@
     "vitest": "^1.2.1"
   },
   "build": {
-
     "appId": "com.sebinatoz.workcalculator",
     "productName": "Work Calculator",
     "copyright": "Copyright © 2026 Sebinatoz",
+    "publish": {
+      "provider": "github",
+      "owner": "Sebinatoz",
+      "repo": "work-calculator"
+    },
     "directories": {
       "output": "release"
     },
@@ -114,7 +118,9 @@
       "icon": "assets/icon.png",
       "category": "Office",
       "maintainer": "Sebinatoz <sebinatoz@users.noreply.github.com>"
-
     }
+  },
+  "dependencies": {
+    "electron-updater": "^6.8.11"
   }
 }

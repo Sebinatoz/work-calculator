@@ -29,6 +29,7 @@ Conçue pour remplacer efficacement le tableur Excel historique de suivi des pre
   * **Export Excel / CSV :** Compatible ligne pour ligne avec l'ancien modèle Excel de Didier.
   * **Export / Impression PDF :** Mise en page soignée au format A4 avec zones d'émargement et signature collaborateur / employeur.
 * 💾 **Sécurité & Portabilité :** Stockage local automatique (Offline-First) + sauvegarde et restauration complète au format JSON.
+* 🚀 **Mises à Jour en 1 Clic (Auto-Update) :** Détection automatique des nouvelles versions publiées avec bandeau de notification et installation instantanée en un seul clic, sans aucune manipulation technique.
 
 ---
 

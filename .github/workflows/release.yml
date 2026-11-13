@@ -74,6 +74,8 @@ jobs:
             release/*.zip
             release/*.AppImage
             release/*.deb
+            release/*.yml
+            release/*.blockmap
           if-no-files-found: warn
 
   publish-release:
@@ -103,6 +105,8 @@ jobs:
             dist-release/*.zip
             dist-release/*.AppImage
             dist-release/*.deb
+            dist-release/*.yml
+            dist-release/*.blockmap
           token: ${{ secrets.GITHUB_TOKEN }}
           generate_release_notes: true
           draft: false
