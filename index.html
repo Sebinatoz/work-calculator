@@ -439,6 +439,12 @@
           </svg>
         </button>
 
+        <!-- Header Update Pill (Hidden by default, shown when update ready) -->
+        <button id="btnHeaderUpdateBadge" title="Une nouvelle version est disponible ! Cliquez pour mettre à jour." class="hidden px-2.5 py-1 rounded-lg bg-emerald-500/15 hover:bg-emerald-500/25 border border-emerald-500/40 text-emerald-700 dark:text-emerald-300 text-xs font-bold transition items-center gap-1.5 animate-pulse cursor-pointer">
+          <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+          <span>MÀJ dispo</span>
+        </button>
+
         <!-- Settings Cog -->
         <button id="btnSettings" title="Paramètres du collaborateur" class="p-2 rounded-lg bg-white dark:bg-zinc-900 hover:bg-slate-100 dark:hover:bg-zinc-800 text-slate-600 dark:text-zinc-300 transition border border-slate-200 dark:border-zinc-800 shadow-sm">
           <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
@@ -447,6 +453,44 @@
 
     </div>
   </header>
+
+  <!-- AUTO-UPDATE NOTIFICATION BANNER -->
+  <div id="updateBanner" class="no-print hidden sticky top-[57px] z-30 bg-gradient-to-r from-emerald-500/15 via-teal-500/15 to-emerald-500/15 dark:from-emerald-950/90 dark:via-zinc-900/90 dark:to-emerald-950/90 border-b border-emerald-500/40 backdrop-blur-md px-4 py-2.5 transition-all duration-300 shadow-md">
+    <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-3 text-xs">
+      <div class="flex items-center gap-2.5">
+        <span class="flex h-2.5 w-2.5 relative">
+          <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+          <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500"></span>
+        </span>
+        <div class="flex items-center gap-1.5 flex-wrap">
+          <span class="font-bold text-slate-900 dark:text-white">Nouvelle version disponible !</span>
+          <span id="updateBannerVersion" class="px-2 py-0.5 rounded-full font-mono font-bold text-[11px] bg-emerald-100 text-emerald-800 dark:bg-emerald-900/70 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-700">v1.2.0</span>
+          <span id="updateBannerText" class="text-slate-600 dark:text-zinc-300 hidden md:inline">— Installez les dernières améliorations en un clic.</span>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-2">
+        <!-- Progress Bar Container (Hidden by default, shown while downloading) -->
+        <div id="updateBannerProgressContainer" class="hidden items-center gap-2">
+          <div class="w-32 sm:w-44 bg-slate-200 dark:bg-zinc-700 rounded-full h-2.5 overflow-hidden">
+            <div id="updateBannerProgressBar" class="bg-gradient-to-r from-emerald-500 to-teal-500 h-2.5 rounded-full transition-all duration-200" style="width: 0%"></div>
+          </div>
+          <span id="updateBannerProgressText" class="text-[11px] font-mono font-bold text-slate-700 dark:text-zinc-200 min-w-[32px]">0%</span>
+        </div>
+
+        <!-- Action Button (1 Click: Update & install) -->
+        <button id="btnBannerUpdateAction" class="px-3.5 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 active:scale-95 text-white font-semibold transition shadow-md shadow-emerald-600/25 flex items-center gap-1.5 text-xs cursor-pointer">
+          <svg id="btnBannerUpdateIcon" class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+          <span id="btnBannerUpdateActionText">Mettre à jour maintenant</span>
+        </button>
+
+        <!-- Dismiss Button -->
+        <button id="btnDismissUpdateBanner" title="Masquer temporairement" class="p-1 rounded-lg text-slate-400 hover:text-slate-600 dark:hover:text-white hover:bg-black/5 dark:hover:bg-white/5 transition">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+      </div>
+    </div>
+  </div>
 
   <!-- PRINT ONLY HEADER & EXECUTIVE SUMMARY -->
   <div class="print-only mb-2">
@@ -731,6 +775,27 @@
             Restaurer (.json)
             <input type="file" id="fileRestore" class="hidden" accept=".json" />
           </label>
+        </div>
+
+        <!-- Section Mise à jour de l'application -->
+        <div class="pt-3 border-t border-slate-200 dark:border-zinc-800 space-y-2.5">
+          <div class="flex items-center justify-between flex-wrap gap-2">
+            <div>
+              <p class="font-bold text-slate-800 dark:text-zinc-100 flex items-center gap-1.5 text-xs">
+                <span>🔄</span>
+                <span>Mise à jour de l'application</span>
+              </p>
+              <p class="text-[11px] text-slate-500 dark:text-zinc-400 mt-0.5">
+                Version installée : <span id="settingsCurrentVersion" class="font-mono font-bold text-emerald-600 dark:text-emerald-400">v1.2.0</span>
+              </p>
+            </div>
+            <button id="btnCheckUpdateManual" type="button" class="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 dark:bg-zinc-800 dark:hover:bg-zinc-700 rounded-lg text-slate-700 dark:text-zinc-200 font-semibold transition flex items-center gap-1.5 text-xs border border-slate-200 dark:border-zinc-700 cursor-pointer">
+              <svg id="iconUpdateRefresh" class="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+              <span id="btnCheckUpdateManualText">Rechercher une mise à jour</span>
+            </button>
+          </div>
+          <!-- Status feedback container -->
+          <div id="settingsUpdateFeedback" class="hidden text-[11px] p-2.5 rounded-lg border transition-all"></div>
         </div>
       </div>
 
@@ -1969,6 +2034,322 @@
         };
         reader.readAsText(file);
       });
+
+      // Initialize Auto-Update System
+      initUpdateManager();
+    }
+
+    // --- AUTO-UPDATE MANAGER ---
+    const APP_VERSION = '1.2.0';
+    let currentAppVersion = APP_VERSION;
+    const isElectron = Boolean(window.electronAPI && window.electronAPI.isElectron);
+
+    function initUpdateManager() {
+      const banner = document.getElementById('updateBanner');
+      const bannerVersion = document.getElementById('updateBannerVersion');
+      const bannerText = document.getElementById('updateBannerText');
+      const progressContainer = document.getElementById('updateBannerProgressContainer');
+      const progressBar = document.getElementById('updateBannerProgressBar');
+      const progressText = document.getElementById('updateBannerProgressText');
+      const btnAction = document.getElementById('btnBannerUpdateAction');
+      const btnActionText = document.getElementById('btnBannerUpdateActionText');
+      const btnDismiss = document.getElementById('btnDismissUpdateBanner');
+      const headerBadge = document.getElementById('btnHeaderUpdateBadge');
+      const settingsVersion = document.getElementById('settingsCurrentVersion');
+      const btnManual = document.getElementById('btnCheckUpdateManual');
+      const btnManualText = document.getElementById('btnCheckUpdateManualText');
+      const iconRefresh = document.getElementById('iconUpdateRefresh');
+      const feedback = document.getElementById('settingsUpdateFeedback');
+
+      let updateInfo = {
+        available: false,
+        downloading: false,
+        downloaded: false,
+        version: null,
+        url: 'https://github.com/Sebinatoz/work-calculator/releases',
+        userTriggered: false,
+        fallbackToManual: false,
+      };
+
+      // Set initial version in Settings
+      if (settingsVersion) {
+        settingsVersion.textContent = 'v' + currentAppVersion;
+      }
+
+      // If running inside Electron, get runtime app version
+      if (isElectron && window.electronAPI.getAppVersion) {
+        window.electronAPI.getAppVersion().then(v => {
+          if (v) {
+            currentAppVersion = v;
+            if (settingsVersion) settingsVersion.textContent = 'v' + currentAppVersion;
+          }
+        }).catch(() => {});
+      }
+
+      function showBanner(version) {
+        if (!banner) return;
+        updateInfo.version = version;
+        updateInfo.available = true;
+        if (bannerVersion) bannerVersion.textContent = 'v' + version;
+        banner.classList.remove('hidden');
+        if (headerBadge) {
+          headerBadge.classList.remove('hidden');
+          headerBadge.classList.add('flex');
+        }
+      }
+
+      function hideBanner() {
+        if (banner) banner.classList.add('hidden');
+      }
+
+      // Dismiss button
+      btnDismiss?.addEventListener('click', () => {
+        hideBanner();
+      });
+
+      // Header badge re-opens the banner
+      headerBadge?.addEventListener('click', () => {
+        if (banner) banner.classList.remove('hidden');
+      });
+
+      // Semantic version compare helper
+      function isNewer(remote, local) {
+        if (!remote) return false;
+        const clean = v => String(v).replace(/^v/, '').trim();
+        const r = clean(remote).split('.').map(n => parseInt(n, 10) || 0);
+        const l = clean(local).split('.').map(n => parseInt(n, 10) || 0);
+        for (let i = 0; i < Math.max(r.length, l.length); i++) {
+          const numR = r[i] || 0;
+          const numL = l[i] || 0;
+          if (numR > numL) return true;
+          if (numR < numL) return false;
+        }
+        return false;
+      }
+
+      // GitHub API check (used in browser mode and as secondary fallback)
+      async function checkGitHubReleases() {
+        try {
+          const resp = await fetch('https://api.github.com/repos/Sebinatoz/work-calculator/releases/latest', {
+            headers: { 'Accept': 'application/vnd.github.v3+json' },
+            cache: 'no-store'
+          });
+          if (!resp.ok) throw new Error('HTTP ' + resp.status);
+          const data = await resp.json();
+          const remoteVersion = (data.tag_name || data.name || '').replace(/^v/, '');
+          if (remoteVersion && isNewer(remoteVersion, currentAppVersion)) {
+            updateInfo.url = data.html_url || 'https://github.com/Sebinatoz/work-calculator/releases';
+            return {
+              available: true,
+              version: remoteVersion,
+              url: updateInfo.url
+            };
+          }
+          return { available: false, version: currentAppVersion };
+        } catch (err) {
+          return { error: err.message };
+        }
+      }
+
+      // 1-Click Update Action Button
+      btnAction?.addEventListener('click', async () => {
+        if (updateInfo.fallbackToManual) {
+          const target = updateInfo.url || 'https://github.com/Sebinatoz/work-calculator/releases';
+          if (isElectron && window.electronAPI.openExternal) {
+            window.electronAPI.openExternal(target);
+          } else {
+            window.open(target, '_blank');
+          }
+          return;
+        }
+
+        if (updateInfo.downloaded) {
+          btnActionText.textContent = 'Installation et redémarrage...';
+          btnAction.disabled = true;
+          if (isElectron && window.electronAPI.quitAndInstall) {
+            window.electronAPI.quitAndInstall();
+          } else {
+            window.location.reload();
+          }
+          return;
+        }
+
+        if (updateInfo.downloading) {
+          return;
+        }
+
+        if (isElectron && window.electronAPI.startDownloadUpdate) {
+          updateInfo.userTriggered = true;
+          updateInfo.downloading = true;
+          btnAction.disabled = true;
+          if (btnActionText) btnActionText.textContent = 'Téléchargement...';
+          progressContainer?.classList.remove('hidden');
+          progressContainer?.classList.add('flex');
+          if (progressBar) progressBar.style.width = '2%';
+          if (progressText) progressText.textContent = '2%';
+
+          try {
+            await window.electronAPI.startDownloadUpdate();
+          } catch (err) {
+            console.error('[Update] Erreur startDownloadUpdate:', err);
+            updateInfo.downloading = false;
+            updateInfo.fallbackToManual = true;
+            btnAction.disabled = false;
+            if (btnActionText) btnActionText.textContent = 'Télécharger la mise à jour';
+            if (window.electronAPI.openExternal) {
+              window.electronAPI.openExternal(updateInfo.url || 'https://github.com/Sebinatoz/work-calculator/releases');
+            }
+          }
+        } else {
+          // Web browser mode
+          const target = updateInfo.url || 'https://github.com/Sebinatoz/work-calculator/releases/latest';
+          if (isElectron && window.electronAPI?.openExternal) {
+            window.electronAPI.openExternal(target);
+          } else {
+            window.open(target, '_blank');
+          }
+        }
+      });
+
+      // Manual check function for Settings
+      async function triggerManualCheck() {
+        if (iconRefresh) iconRefresh.classList.add('animate-spin');
+        if (btnManual) btnManual.disabled = true;
+        if (btnManualText) btnManualText.textContent = 'Vérification...';
+        if (feedback) {
+          feedback.className = 'text-[11px] p-2.5 rounded-lg border border-slate-200 dark:border-zinc-700 bg-slate-50 dark:bg-zinc-800 text-slate-600 dark:text-zinc-300';
+          feedback.innerHTML = '🔍 Recherche de nouvelle version en cours...';
+          feedback.classList.remove('hidden');
+        }
+
+        if (isElectron && window.electronAPI.checkForUpdates) {
+          try {
+            await window.electronAPI.checkForUpdates();
+          } catch (err) {
+            // Handled via onUpdateError
+          }
+        } else {
+          const res = await checkGitHubReleases();
+          if (iconRefresh) iconRefresh.classList.remove('animate-spin');
+          if (btnManual) btnManual.disabled = false;
+          if (btnManualText) btnManualText.textContent = 'Rechercher une mise à jour';
+
+          if (res.available) {
+            showBanner(res.version);
+            if (feedback) {
+              feedback.className = 'text-[11px] p-2.5 rounded-lg border border-emerald-300 dark:border-emerald-800 bg-emerald-50 dark:bg-emerald-950/50 text-emerald-800 dark:text-emerald-200';
+              feedback.innerHTML = `🎉 <strong>Nouvelle version v${res.version} disponible !</strong> <a href="${res.url}" target="_blank" class="ml-2 underline font-bold">Télécharger</a>`;
+            }
+          } else if (res.error) {
+            if (feedback) {
+              feedback.className = 'text-[11px] p-2.5 rounded-lg border border-amber-300 dark:border-amber-800 bg-amber-50 dark:bg-amber-950/50 text-amber-800 dark:text-amber-200';
+              feedback.innerHTML = `ℹ️ Impossible de joindre le serveur de mise à jour (${res.error}). <a href="https://github.com/Sebinatoz/work-calculator/releases" target="_blank" class="underline font-semibold ml-1">Consulter GitHub</a>`;
+            }
+          } else {
+            if (feedback) {
+              feedback.className = 'text-[11px] p-2.5 rounded-lg border border-emerald-300 dark:border-emerald-800 bg-emerald-50 dark:bg-emerald-950/50 text-emerald-800 dark:text-emerald-200';
+              feedback.innerHTML = `✅ <strong>Vous êtes à jour !</strong> Vous utilisez la version la plus récente de Work Calculator (v${currentAppVersion}).`;
+            }
+          }
+        }
+      }
+
+      btnManual?.addEventListener('click', triggerManualCheck);
+
+      // Wire Electron IPC event listeners
+      if (isElectron && window.electronAPI) {
+        window.electronAPI.onUpdateChecking?.(() => {
+          if (iconRefresh) iconRefresh.classList.add('animate-spin');
+          if (btnManual) btnManual.disabled = true;
+          if (btnManualText) btnManualText.textContent = 'Vérification...';
+        });
+
+        window.electronAPI.onUpdateAvailable?.((info) => {
+          if (iconRefresh) iconRefresh.classList.remove('animate-spin');
+          if (btnManual) btnManual.disabled = false;
+          if (btnManualText) btnManualText.textContent = 'Rechercher une mise à jour';
+          const v = (info && info.version) ? info.version : 'nouvelle';
+          showBanner(v);
+
+          if (feedback) {
+            feedback.className = 'text-[11px] p-2.5 rounded-lg border border-emerald-300 dark:border-emerald-800 bg-emerald-50 dark:bg-emerald-950/50 text-emerald-800 dark:text-emerald-200';
+            feedback.innerHTML = `🎉 <strong>Nouvelle version v${v} disponible !</strong> Cliquez sur « Mettre à jour maintenant » dans le bandeau supérieur.`;
+            feedback.classList.remove('hidden');
+          }
+        });
+
+        window.electronAPI.onUpdateNotAvailable?.((info) => {
+          if (iconRefresh) iconRefresh.classList.remove('animate-spin');
+          if (btnManual) btnManual.disabled = false;
+          if (btnManualText) btnManualText.textContent = 'Rechercher une mise à jour';
+
+          if (feedback && !feedback.classList.contains('hidden')) {
+            feedback.className = 'text-[11px] p-2.5 rounded-lg border border-emerald-300 dark:border-emerald-800 bg-emerald-50 dark:bg-emerald-950/50 text-emerald-800 dark:text-emerald-200';
+            const v = (info && info.version) ? info.version : currentAppVersion;
+            feedback.innerHTML = `✅ <strong>Vous êtes à jour !</strong> Vous utilisez la version la plus récente de Work Calculator (v${v}).`;
+          }
+        });
+
+        window.electronAPI.onUpdateProgress?.((progress) => {
+          updateInfo.downloading = true;
+          progressContainer?.classList.remove('hidden');
+          progressContainer?.classList.add('flex');
+          const pct = Math.min(100, Math.max(0, progress.percent || 0));
+          if (progressBar) progressBar.style.width = pct + '%';
+          if (progressText) progressText.textContent = pct + '%';
+          if (btnActionText) btnActionText.textContent = `Téléchargement... ${pct}%`;
+          if (btnAction) btnAction.disabled = true;
+        });
+
+        window.electronAPI.onUpdateDownloaded?.((info) => {
+          updateInfo.downloading = false;
+          updateInfo.downloaded = true;
+          if (progressBar) progressBar.style.width = '100%';
+          if (progressText) progressText.textContent = '100%';
+          if (bannerText) bannerText.textContent = '— Téléchargement terminé ! Cliquez pour redémarrer et installer.';
+          if (btnActionText) btnActionText.textContent = '⚡ Redémarrer pour appliquer';
+          if (btnAction) btnAction.disabled = false;
+
+          // If the user triggered the update, install automatically
+          if (updateInfo.userTriggered) {
+            if (btnActionText) btnActionText.textContent = 'Installation en cours...';
+            setTimeout(() => {
+              window.electronAPI.quitAndInstall?.();
+            }, 600);
+          }
+        });
+
+        window.electronAPI.onUpdateError?.((err) => {
+          if (iconRefresh) iconRefresh.classList.remove('animate-spin');
+          if (btnManual) btnManual.disabled = false;
+          if (btnManualText) btnManualText.textContent = 'Rechercher une mise à jour';
+
+          console.warn('[Updater IPC Notice]', err);
+          if (updateInfo.downloading) {
+            updateInfo.downloading = false;
+            updateInfo.fallbackToManual = true;
+            progressContainer?.classList.add('hidden');
+            if (btnAction) btnAction.disabled = false;
+            if (btnActionText) btnActionText.textContent = 'Télécharger sur GitHub';
+          }
+          if (feedback && !feedback.classList.contains('hidden')) {
+            feedback.className = 'text-[11px] p-2.5 rounded-lg border border-amber-300 dark:border-amber-800 bg-amber-50 dark:bg-amber-950/50 text-amber-800 dark:text-amber-200';
+            feedback.innerHTML = `ℹ️ ${err.message || 'Vérification indisponible'}. <a href="https://github.com/Sebinatoz/work-calculator/releases" target="_blank" class="underline font-semibold ml-1">Consulter GitHub</a>`;
+          }
+        });
+
+        window.electronAPI.onManualCheckRequested?.(() => {
+          triggerManualCheck();
+        });
+      } else {
+        // In browser mode: check GitHub releases automatically after 4 seconds
+        setTimeout(async () => {
+          const res = await checkGitHubReleases();
+          if (res && res.available) {
+            showBanner(res.version);
+          }
+        }, 4000);
+      }
     }
 
     window.addEventListener('DOMContentLoaded', init);

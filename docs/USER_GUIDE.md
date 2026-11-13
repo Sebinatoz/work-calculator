@@ -128,3 +128,18 @@ Cliquez sur l'engrenage en haut à droite pour accéder aux réglages :
 * **Pays des jours fériés :** Belgique, France, Luxembourg, ou Personnalisé.
 * **Listes des Chantiers et des Absences :** Ajoutez ou retirez des éléments séparés par une virgule pour adapter les menus déroulants.
 * **Sauvegarde & Restauration (.json) :** Téléchargez une copie intégrale de toutes vos données pour les transférer sur un autre ordinateur.
+
+---
+
+## 6. Mises à Jour en 1 Clic (Zéro Prise de Tête)
+
+L'application intègre un système de mise à jour entièrement automatisé :
+* **Détection automatique :** Dès qu'une nouvelle version optimisée est publiée, un bandeau apparaît en haut de la fenêtre :
+  `🚀 Nouvelle version disponible ! vX.Y.Z — [⚡ Mettre à jour maintenant]`
+* **1 Seul Clic :** Cliquez sur **`Mettre à jour maintenant`** :
+  * La barre de progression affiche l'avancement du téléchargement (0 à 100%).
+  * Dès que c'est prêt, l'application s'installe et redémarre toute seule avec la dernière version !
+  * **Vos données et vos heures saisies sont préservées à 100%.**
+* **Vérification manuelle :** À tout moment, vous pouvez aussi vérifier manuellement :
+  * Dans les **Paramètres (⚙️)** > section **« Mise à jour de l'application »** > bouton **`Rechercher une mise à jour`**.
+  * Ou dans le menu supérieur de la fenêtre : **`Aide > Vérifier les mises à jour...`**.
